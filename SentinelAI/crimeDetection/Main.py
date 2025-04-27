@@ -172,27 +172,41 @@ if __name__ == "__main__":
     # detect_objects_and_plot(photo_path)
 """
 
-
-
-
-
-
-
-
-
-
-
-"""
 from ultralytics import YOLO
 import cv2
+import numpy as np
 import time
 
+
+# DaCoLT benzeri ön işleme fonksiyonu
+def brightness_guided_preprocessing(frame, darken_factor=0.7):
+    # HSV'ye çevir
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+
+    # V kanalını azalt (karartma)
+    hsv[:, :, 2] = np.clip(hsv[:, :, 2] * darken_factor, 0, 255)
+
+    # Geri BGR'ye çevir
+    darkened = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+
+    # Gri tona çevir
+    gray = cv2.cvtColor(darkened, cv2.COLOR_BGR2GRAY)
+
+    # CLAHE uygulayarak kontrast artır
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+    contrast_enhanced = clahe.apply(gray)
+
+    # Tekrar 3 kanala çıkar (model renkli görüntü bekliyor olabilir)
+    processed_frame = cv2.cvtColor(contrast_enhanced, cv2.COLOR_GRAY2BGR)
+
+    return processed_frame
+
+
+# Model yükle
 model = YOLO('../Models/knifeModel(epoc=50,img=1280,4000).pt')
-#model = YOLO('yolov8n.pt')
 
 cap = cv2.VideoCapture(0)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)  # 720p genişlik
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)  # 720p yükseklik
+
 
 prev_time = 0
 class_names = model.names
@@ -202,19 +216,22 @@ while cap.isOpened():
     if not ret:
         break
 
-    # 📈 GÖRSEL BOYUTU BÜYÜTÜLDÜ: 1280
+    # 📸 Ön İşleme: DaCoLT
+    processed_frame = brightness_guided_preprocessing(frame)
+
+    # Model ile tahmin
     results = model.predict(
-        source=frame,
+        source=processed_frame,
         conf=0.4,
         iou=0.4,
-        imgsz=1280,  # yüksek çözünürlük
+        imgsz=680,
         show=False,
         verbose=False
     )
 
     result = results[0]
     boxes = result.boxes
-    annotated_frame = frame.copy()
+    annotated_frame = frame.copy()  # Orijinal frame üzerine çizim yapılacak
 
     for box in boxes:
         cls_id = int(box.cls[0])
@@ -233,14 +250,14 @@ while cap.isOpened():
     cv2.putText(annotated_frame, f"FPS: {fps:.2f}", (10, 30),
                 cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
 
-    cv2.imshow("YOLOv8 Live Detection", annotated_frame)
+    cv2.imshow("YOLOv8 Live Detection (Preprocessed)", annotated_frame)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
 cap.release()
 cv2.destroyAllWindows()
-"""
+
 
 
 
@@ -305,8 +322,3 @@ while True:
 
 cv2.destroyAllWindows()
 """
-import cv2
-from ultralytics import YOLO
-
-model = YOLO('../Models/knifeModel(epoc=50,img=1280,4000).pt')
-model.export(format="onnx")
