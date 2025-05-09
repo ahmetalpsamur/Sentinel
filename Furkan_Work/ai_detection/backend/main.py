@@ -26,7 +26,7 @@ def init_kafka():
             return
         except Exception as e:
             logger.warning(f"❗ Kafka bağlantısı denemesi başarısız ({attempt+1}/10): {e}")
-            time.sleep(3)  # 3 saniye bekle, tekrar dene
+            time.sleep(2)  # 2 saniye bekle, tekrar dene
 
     logger.error("🚫 Kafka producer başlatılamadı, çıkılıyor.")
     raise RuntimeError("Kafka bağlantısı kurulamadı")

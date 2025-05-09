@@ -25,3 +25,8 @@
 2025-05-06 15:18:31,818 — INFO — Kafka'ya mesaj gönderildi. Video ID: 9e64478b-5b28-4377-8645-8915a9c36eb4
 2025-05-06 15:28:04,541 — INFO — Video kaydedildi: /app/data/uploaded_videos/c7e368b3-1943-46d7-bd5c-189836c5b47f_Kayıt 2025-02-13 021200.mp4
 2025-05-06 15:28:04,555 — INFO — Kafka'ya mesaj gönderildi. Video ID: c7e368b3-1943-46d7-bd5c-189836c5b47f
+2025-05-08 19:05:55,542 — WARNING — ❗ Kafka bağlantısı denemesi başarısız (1/10): NoBrokersAvailable
+2025-05-08 19:05:59,544 — WARNING — ❗ Kafka bağlantısı denemesi başarısız (2/10): NoBrokersAvailable
+2025-05-08 19:06:01,556 — INFO — ✅ Kafka producer başarıyla başlatıldı.
+2025-05-08 19:06:20,345 — INFO — Video kaydedildi: /app/data/uploaded_videos/f3ea14b0-51b6-4d31-9ea0-13b7f4eed457_Ekran Kaydı 2025-03-09 180427.mp4
+2025-05-08 19:06:20,359 — INFO — Kafka'ya mesaj gönderildi. Video ID: f3ea14b0-51b6-4d31-9ea0-13b7f4eed457

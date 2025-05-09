@@ -30,6 +30,77 @@ services:
     env_file:
       - .env
 
+  ai_unit_1:
+    build: ./ai_unit
+    volumes:
+      - ./ai_unit/frame:/app/frame
+      - ./backend/logs:/app/logs
+      - ./ai_unit/models:/app/models
+      - ./ai_unit/redis_config:/app/redis_config
+    depends_on:
+      kafka:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - KAFKA_BOOTSTRAP=kafka:9092
+      - PYTHONPATH=/app
+    env_file:
+      - .env
+
+  ai_unit_2:
+    build: ./ai_unit
+    volumes:
+      - ./ai_unit/frame:/app/frame
+      - ./backend/logs:/app/logs
+      - ./ai_unit/models:/app/models
+      - ./ai_unit/redis_config:/app/redis_config
+    depends_on:
+      kafka:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - KAFKA_BOOTSTRAP=kafka:9092
+      - PYTHONPATH=/app
+    env_file:
+      - .env
+
+  ai_unit_3:
+    build: ./ai_unit
+    volumes:
+      - ./ai_unit/frame:/app/frame
+      - ./backend/logs:/app/logs
+      - ./ai_unit/models:/app/models
+      - ./ai_unit/redis_config:/app/redis_config
+    depends_on:
+      kafka:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - KAFKA_BOOTSTRAP=kafka:9092
+      - PYTHONPATH=/app
+    env_file:
+      - .env
+
+  ai_unit_4:
+    build: ./ai_unit
+    volumes:
+      - ./ai_unit/frame:/app/frame
+      - ./backend/logs:/app/logs
+      - ./ai_unit/models:/app/models
+      - ./ai_unit/redis_config:/app/redis_config
+    depends_on:
+      kafka:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - KAFKA_BOOTSTRAP=kafka:9092
+      - PYTHONPATH=/app
+    env_file:
+      - .env
 
   redis:
     image: redis:7
@@ -65,4 +136,3 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-#
