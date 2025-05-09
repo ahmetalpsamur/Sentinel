@@ -1,1 +1,26 @@
 Bitirme Projesi
+
+Furkan_Work dizinindeki projeyi çalıştırmak için aşağıdaki adımları takip edin.
+
+## Gereksinimler
+Projeyi çalıştırmak için aşağıdaki araçların sisteminizde kurulu olması gerekir:
+
+- [Docker Engine](https://docs.docker.com/get-docker/)
+
+Docker Desktop uygulamasını açın.
+
+## Çalıştırmak
+Repository'i çektikten sonra SENTINAL/Furkan_Work/ai_detection dizinine terminalde gidin.
+
+Ortam değişkenlerini eklemek için aşağıdaki komutu çalıştırın.
+"cp .env.example .env"
+
+Sistemi başlatmak için aşağıdaki komutu çalıştırın.
+"docker compose up --build"
+
+Postman uygulaması aracılığı ile http://0.0.0.0:8000/upload_video/ bu endpointe "POST" türünde bir http çağrısı gönderip deneyebilirsiniz. 
+Ancak bunu yaparken alttaki "body" kısmı içerisinde key=file, key_type=File olarak ayarlayın ve Value kısmında gelen dosya seçme düğmesi ile göndermek istediğiniz videoyu ekleyin ve çağrıyı gönderin.
+
+
+
+
