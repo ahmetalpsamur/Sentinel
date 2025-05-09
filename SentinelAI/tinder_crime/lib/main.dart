@@ -19,29 +19,203 @@ class CrimeDetectionApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const CrimeDetectionHomePage(),
+      home: const AuthScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
-class CrimeDetectionHomePage extends StatefulWidget {
-  const CrimeDetectionHomePage({super.key});
+// Authentication Screen
+class AuthScreen extends StatefulWidget {
+  const AuthScreen({super.key});
 
   @override
-  _CrimeDetectionHomePageState createState() => _CrimeDetectionHomePageState();
+  _AuthScreenState createState() => _AuthScreenState();
 }
 
-class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
-  int _selectedIndex = 0;
-  final List<CrimeVideo> _crimeVideos = [
+class _AuthScreenState extends State<AuthScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _isAuthority = false;
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  void _login() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+
+    // Simulate authentication
+    await Future.delayed(const Duration(seconds: 1));
+
+    setState(() => _isLoading = false);
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CrimeDetectionHomePage(
+          isAuthority: _isAuthority,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Crime Swiper Login')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                controller: _emailController,
+                decoration: const InputDecoration(labelText: 'Email'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your email';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _passwordController,
+                decoration: const InputDecoration(labelText: 'Password'),
+                obscureText: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your password';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Checkbox(
+                    value: _isAuthority,
+                    onChanged: (value) {
+                      setState(() {
+                        _isAuthority = value ?? false;
+                      });
+                    },
+                  ),
+                  const Text('I am a law enforcement authority'),
+                ],
+              ),
+              const SizedBox(height: 20),
+              _isLoading
+                  ? const CircularProgressIndicator()
+                  : ElevatedButton(
+                onPressed: _login,
+                child: const Text('Login'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Crime Video Model
+class CrimeVideo {
+  final String id;
+  final String title;
+  final String description;
+  final String videoUrl;
+  final double crimeProbability;
+  final LatLng location;
+  final DateTime timestamp;
+  final String crimeType;
+
+  const CrimeVideo({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.videoUrl,
+    required this.crimeProbability,
+    required this.location,
+    required this.timestamp,
+    required this.crimeType,
+  });
+}
+
+// Reported Crime Model
+class ReportedCrime {
+  final CrimeVideo crimeVideo;
+  final DateTime reportedTime;
+  String status;
+  String? notes;
+  String? assignedOfficer;
+
+  ReportedCrime({
+    required this.crimeVideo,
+    required this.reportedTime,
+    this.status = 'Pending',
+    this.notes,
+    this.assignedOfficer,
+  });
+}
+
+// Crime Report Manager
+class ReportedCrimesManager {
+  static final List<ReportedCrime> _reportedCrimes = [];
+  static final List<String> _officers = [
+    'Officer Smith',
+    'Detective Johnson',
+    'Sergeant Williams',
+    'Lieutenant Brown'
+  ];
+
+  static void reportCrime(CrimeVideo crime) {
+    _reportedCrimes.add(ReportedCrime(
+      crimeVideo: crime,
+      reportedTime: DateTime.now(),
+    ));
+  }
+
+  static List<ReportedCrime> get reportedCrimes => _reportedCrimes;
+  static List<String> get officers => _officers;
+
+  static void updateStatus(String crimeId, String newStatus, {String? notes, String? officer}) {
+    final crime = _reportedCrimes.firstWhere((c) => c.crimeVideo.id == crimeId);
+    crime.status = newStatus;
+    if (notes != null) crime.notes = notes;
+    if (officer != null) crime.assignedOfficer = officer;
+  }
+
+  static List<ReportedCrime> searchCrimes(String query) {
+    if (query.isEmpty) return _reportedCrimes;
+    return _reportedCrimes.where((crime) {
+      return crime.crimeVideo.title.toLowerCase().contains(query.toLowerCase()) ||
+          crime.crimeVideo.crimeType.toLowerCase().contains(query.toLowerCase()) ||
+          crime.status.toLowerCase().contains(query.toLowerCase()) ||
+          (crime.assignedOfficer?.toLowerCase().contains(query.toLowerCase()) ?? false);
+    }).toList();
+  }
+}
+
+// Main Home Page
+class CrimeDetectionHomePage extends StatefulWidget {
+  final bool isAuthority;
+  final List<CrimeVideo> initialCrimeVideos = [
     CrimeVideo(
       id: '1',
       title: 'Suspicious Activity in Parking Lot',
       description: 'Possible car break-in detected at 3:15 AM',
       videoUrl: 'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',
-      crimeProbability: 0.87,
-      location: const LatLng(37.7749, -122.4194),
+      crimeProbability: 0.10,
+      location: const LatLng(38.374564, 27.039499),
       timestamp: DateTime.now().subtract(const Duration(hours: 2)),
       crimeType: 'Theft',
     ),
@@ -51,7 +225,7 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
       description: 'Two individuals in physical confrontation',
       videoUrl: 'https://example.com/videos/atm_altercation.mp4',
       crimeProbability: 0.92,
-      location: const LatLng(34.0522, -118.2437),
+      location: const LatLng(38.361564, 27.539499),
       timestamp: DateTime.now().subtract(const Duration(days: 1)),
       crimeType: 'Assault',
     ),
@@ -61,7 +235,7 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
       description: 'Individual spray painting on walls',
       videoUrl: 'https://example.com/videos/vandalism.mp4',
       crimeProbability: 0.78,
-      location: const LatLng(40.7128, -74.0060),
+      location: const LatLng(38.304064, 27.009099),
       timestamp: DateTime.now().subtract(const Duration(days: 3)),
       crimeType: 'Vandalism',
     ),
@@ -71,11 +245,27 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
       description: 'Person taking package from residential porch',
       videoUrl: 'https://example.com/videos/package_theft.mp4',
       crimeProbability: 0.85,
-      location: const LatLng(41.8781, -87.6298),
+      location: const LatLng(38.304564, 26.039409),
       timestamp: DateTime.now().subtract(const Duration(days: 5)),
       crimeType: 'Theft',
     ),
   ];
+
+  CrimeDetectionHomePage({super.key, required this.isAuthority});
+
+  @override
+  _CrimeDetectionHomePageState createState() => _CrimeDetectionHomePageState();
+}
+
+class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
+  int _selectedIndex = 0;
+  late List<CrimeVideo> _crimeVideos;
+
+  @override
+  void initState() {
+    super.initState();
+    _crimeVideos = List.from(widget.initialCrimeVideos);
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -83,25 +273,42 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
     });
   }
 
+  void _removeReportedCrime(String crimeId) {
+    setState(() {
+      _crimeVideos.removeWhere((crime) => crime.id == crimeId);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Crime Detection (Free)'),
+        title: const Text('Crime Swiper'),
       ),
       body: _selectedIndex == 0
-          ? VideoListScreen(videos: _crimeVideos)
-          : AnalyticsScreen(videos: _crimeVideos),
+          ? VideoListScreen(
+        videos: _crimeVideos,
+        isAuthority: widget.isAuthority,
+        onCrimeReported: _removeReportedCrime,
+      )
+          : _selectedIndex == 1
+          ? const ReportedCrimesScreen()
+          : AnalyticsScreen(videos: widget.initialCrimeVideos, isAuthority: widget.isAuthority),
       bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
+        items: [
+          const BottomNavigationBarItem(
             icon: Icon(Icons.video_library),
             label: 'Videos',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.analytics),
-            label: 'Analytics',
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.report),
+            label: 'Reports',
           ),
+          if (widget.isAuthority)
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.analytics),
+              label: 'Analytics',
+            ),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue[800],
@@ -111,26 +318,46 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
   }
 }
 
+// Video List Screen
 class VideoListScreen extends StatelessWidget {
   final List<CrimeVideo> videos;
+  final bool isAuthority;
+  final Function(String) onCrimeReported;
 
-  const VideoListScreen({super.key, required this.videos});
+  const VideoListScreen({
+    super.key,
+    required this.videos,
+    required this.isAuthority,
+    required this.onCrimeReported,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: videos.length,
       itemBuilder: (context, index) {
-        return VideoCard(video: videos[index]);
+        return VideoCard(
+          video: videos[index],
+          isAuthority: isAuthority,
+          onCrimeReported: onCrimeReported,
+        );
       },
     );
   }
 }
 
+// Video Card Widget
 class VideoCard extends StatelessWidget {
   final CrimeVideo video;
+  final bool isAuthority;
+  final Function(String) onCrimeReported;
 
-  const VideoCard({super.key, required this.video});
+  const VideoCard({
+    super.key,
+    required this.video,
+    required this.isAuthority,
+    required this.onCrimeReported,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +368,11 @@ class VideoCard extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => VideoDetailScreen(video: video),
+              builder: (context) => VideoDetailScreen(
+                video: video,
+                isAuthority: isAuthority,
+                onCrimeReported: onCrimeReported,
+              ),
             ),
           );
         },
@@ -212,6 +443,7 @@ class VideoCard extends StatelessWidget {
   }
 }
 
+// Video Thumbnail Widget
 class VideoThumbnail extends StatefulWidget {
   final String videoUrl;
 
@@ -269,6 +501,7 @@ class _VideoThumbnailState extends State<VideoThumbnail> {
   }
 }
 
+// Crime Probability Indicator Widget
 class CrimeProbabilityIndicator extends StatelessWidget {
   final double probability;
 
@@ -303,10 +536,18 @@ class CrimeProbabilityIndicator extends StatelessWidget {
   }
 }
 
+// Video Detail Screen
 class VideoDetailScreen extends StatefulWidget {
   final CrimeVideo video;
+  final bool isAuthority;
+  final Function(String) onCrimeReported;
 
-  const VideoDetailScreen({super.key, required this.video});
+  const VideoDetailScreen({
+    super.key,
+    required this.video,
+    required this.isAuthority,
+    required this.onCrimeReported,
+  });
 
   @override
   _VideoDetailScreenState createState() => _VideoDetailScreenState();
@@ -486,7 +727,10 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.pop(context);
+                ReportedCrimesManager.reportCrime(widget.video);
+                widget.onCrimeReported(widget.video.id);
+                Navigator.pop(context); // close dialog
+                Navigator.pop(context); // go back to main page
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('Incident reported to authorities'),
@@ -502,10 +746,12 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> {
   }
 }
 
+// Analytics Screen
 class AnalyticsScreen extends StatelessWidget {
   final List<CrimeVideo> videos;
+  final bool isAuthority;
 
-  const AnalyticsScreen({super.key, required this.videos});
+  const AnalyticsScreen({super.key, required this.videos, required this.isAuthority});
 
   @override
   Widget build(BuildContext context) {
@@ -514,110 +760,112 @@ class AnalyticsScreen extends StatelessWidget {
     final hourlyDistribution = _calculateHourlyDistribution(videos);
     final severityDistribution = _calculateSeverityDistribution(videos);
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Crime Statistics Overview',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 20),
-          ..._buildSummaryCards(videos),
-          const SizedBox(height: 20),
-          const Text(
-            'Crime Type Distribution',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            height: 300,
-            child: SfCartesianChart(
-              primaryXAxis: CategoryAxis(),
-              series: <ChartSeries>[
-                ColumnSeries<MapEntry<String, int>, String>(
-                  dataSource: crimeTypeCount.entries.toList(),
-                  xValueMapper: (entry, _) => entry.key,
-                  yValueMapper: (entry, _) => entry.value,
-                  dataLabelSettings: const DataLabelSettings(isVisible: true),
-                  color: Colors.blue,
-                )
-              ],
+    return Scaffold(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Crime Statistics Overview',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            'Hourly Crime Distribution',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            height: 300,
-            child: SfCartesianChart(
-              primaryXAxis: NumericAxis(interval: 2),
-              series: <ChartSeries>[
-                LineSeries<MapEntry<int, int>, int>(
-                  dataSource: hourlyDistribution.entries.toList(),
-                  xValueMapper: (entry, _) => entry.key,
-                  yValueMapper: (entry, _) => entry.value,
-                  dataLabelSettings: const DataLabelSettings(isVisible: true),
-                  color: Colors.red,
-                )
-              ],
+            const SizedBox(height: 20),
+            ..._buildSummaryCards(videos),
+            const SizedBox(height: 20),
+            const Text(
+              'Crime Type Distribution',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            'Crime Severity Levels',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            height: 300,
-            child: SfCircularChart(
-              series: <CircularSeries>[
-                PieSeries<MapEntry<String, int>, String>(
-                  dataSource: severityDistribution.entries.toList(),
-                  xValueMapper: (entry, _) => entry.key,
-                  yValueMapper: (entry, _) => entry.value,
-                  dataLabelSettings: const DataLabelSettings(isVisible: true),
-                )
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          const Text(
-            'Recent Crime Locations',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            height: 300,
-            child: FlutterMap(
-              options: MapOptions(
-                center: const LatLng(37.7749, -122.4194),
-                zoom: 3.0,
+            const SizedBox(height: 10),
+            SizedBox(
+              height: 300,
+              child: SfCartesianChart(
+                primaryXAxis: CategoryAxis(),
+                series: <ChartSeries>[
+                  ColumnSeries<MapEntry<String, int>, String>(
+                    dataSource: crimeTypeCount.entries.toList(),
+                    xValueMapper: (entry, _) => entry.key,
+                    yValueMapper: (entry, _) => entry.value,
+                    dataLabelSettings: const DataLabelSettings(isVisible: true),
+                    color: Colors.blue,
+                  )
+                ],
               ),
-              children: [
-                TileLayer(
-                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  userAgentPackageName: 'com.example.crimedetection',
-                ),
-                MarkerLayer(
-                  markers: videos.map((video) => Marker(
-                    point: video.location,
-                    builder: (ctx) => Icon(
-                      Icons.location_pin,
-                      color: _getSeverityColor(video.crimeProbability),
-                      size: 30,
-                    ),
-                  )).toList(),
-                ),
-              ],
             ),
-          ),
-        ],
+            const SizedBox(height: 20),
+            const Text(
+              'Hourly Crime Distribution',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              height: 300,
+              child: SfCartesianChart(
+                primaryXAxis: NumericAxis(interval: 2),
+                series: <ChartSeries>[
+                  LineSeries<MapEntry<int, int>, int>(
+                    dataSource: hourlyDistribution.entries.toList(),
+                    xValueMapper: (entry, _) => entry.key,
+                    yValueMapper: (entry, _) => entry.value,
+                    dataLabelSettings: const DataLabelSettings(isVisible: true),
+                    color: Colors.red,
+                  )
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Crime Severity Levels',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              height: 300,
+              child: SfCircularChart(
+                series: <CircularSeries>[
+                  PieSeries<MapEntry<String, int>, String>(
+                    dataSource: severityDistribution.entries.toList(),
+                    xValueMapper: (entry, _) => entry.key,
+                    yValueMapper: (entry, _) => entry.value,
+                    dataLabelSettings: const DataLabelSettings(isVisible: true),
+                  )
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Recent Crime Locations',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              height: 300,
+              child: FlutterMap(
+                options: MapOptions(
+                  center: const LatLng(38.874564, 35.039499),
+                  zoom: 5.0,
+                ),
+                children: [
+                  TileLayer(
+                    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    userAgentPackageName: 'com.example.crimedetection',
+                  ),
+                  MarkerLayer(
+                    markers: videos.map((video) => Marker(
+                      point: video.location,
+                      builder: (ctx) => Icon(
+                        Icons.location_pin,
+                        color: _getSeverityColor(video.crimeProbability),
+                        size: 30,
+                      ),
+                    )).toList(),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -732,24 +980,244 @@ class AnalyticsScreen extends StatelessWidget {
   }
 }
 
-class CrimeVideo {
-  final String id;
-  final String title;
-  final String description;
-  final String videoUrl;
-  final double crimeProbability;
-  final LatLng location;
-  final DateTime timestamp;
-  final String crimeType;
+// Reported Crimes Screen
+class ReportedCrimesScreen extends StatefulWidget {
+  const ReportedCrimesScreen({super.key});
 
-  const CrimeVideo({
-    required this.id,
-    required this.title,
-    required this.description,
-    required this.videoUrl,
-    required this.crimeProbability,
-    required this.location,
-    required this.timestamp,
-    required this.crimeType,
-  });
+  @override
+  _ReportedCrimesScreenState createState() => _ReportedCrimesScreenState();
+}
+
+class _ReportedCrimesScreenState extends State<ReportedCrimesScreen> {
+  final _searchController = TextEditingController();
+  List<ReportedCrime> _displayedCrimes = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _displayedCrimes = ReportedCrimesManager.reportedCrimes;
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged() {
+    setState(() {
+      _displayedCrimes = ReportedCrimesManager.searchCrimes(_searchController.text);
+    });
+  }
+
+  void _updateCrimeStatus(ReportedCrime crime) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        String? newStatus = crime.status;
+        String? notes = crime.notes;
+        String? selectedOfficer = crime.assignedOfficer;
+
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Update Crime Status'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    DropdownButtonFormField<String>(
+                      value: newStatus,
+                      items: ['Pending', 'Investigating', 'Resolved']
+                          .map((status) => DropdownMenuItem(
+                        value: status,
+                        child: Text(status),
+                      ))
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          newStatus = value;
+                        });
+                      },
+                      decoration: const InputDecoration(labelText: 'Status'),
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      value: selectedOfficer,
+                      items: [
+                        const DropdownMenuItem(
+                          value: null,
+                          child: Text('Unassigned'),
+                        ),
+                        ...ReportedCrimesManager.officers
+                            .map((officer) => DropdownMenuItem(
+                          value: officer,
+                          child: Text(officer),
+                        ))
+                            .toList(),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          selectedOfficer = value;
+                        });
+                      },
+                      decoration: const InputDecoration(labelText: 'Assigned Officer'),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      decoration: const InputDecoration(labelText: 'Notes'),
+                      onChanged: (value) {
+                        notes = value;
+                      },
+                      controller: TextEditingController(text: notes),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    if (newStatus != null) {
+                      ReportedCrimesManager.updateStatus(
+                        crime.crimeVideo.id,
+                        newStatus!,
+                        notes: notes,
+                        officer: selectedOfficer,
+                      );
+                      setState(() {});
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: const Text('Update'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Reported Crimes'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications),
+            onPressed: () {
+              // Handle notifications
+            },
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                labelText: 'Search reported crimes',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: _displayedCrimes.isEmpty
+                ? const Center(
+              child: Text('No crimes have been reported yet.'),
+            )
+                : ListView.builder(
+              itemCount: _displayedCrimes.length,
+              itemBuilder: (context, index) {
+                final reportedCrime = _displayedCrimes[index];
+                return Card(
+                  margin: const EdgeInsets.all(8.0),
+                  child: ListTile(
+                    title: Text(reportedCrime.crimeVideo.title),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(reportedCrime.crimeVideo.crimeType),
+                        Text(
+                          'Reported: ${_formatDateTime(reportedCrime.reportedTime)}',
+                          style: TextStyle(color: Colors.grey[600]),
+                        ),
+                        Text(
+                          'Status: ${reportedCrime.status}',
+                          style: TextStyle(
+                            color: _getStatusColor(reportedCrime.status),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        if (reportedCrime.assignedOfficer != null)
+                          Text(
+                            'Officer: ${reportedCrime.assignedOfficer}',
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
+                        if (reportedCrime.notes != null)
+                          Text(
+                            'Notes: ${reportedCrime.notes}',
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
+                      ],
+                    ),
+                    leading: CrimeProbabilityIndicator(
+                      probability: reportedCrime.crimeVideo.crimeProbability,
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.edit),
+                      onPressed: () => _updateCrimeStatus(reportedCrime),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => VideoDetailScreen(
+                            video: reportedCrime.crimeVideo,
+                            isAuthority: true,
+                            onCrimeReported: (_) {},
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDateTime(DateTime dateTime) {
+    return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-'
+        '${dateTime.day.toString().padLeft(2, '0')} '
+        '${dateTime.hour.toString().padLeft(2, '0')}:'
+        '${dateTime.minute.toString().padLeft(2, '0')}';
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return Colors.orange;
+      case 'investigating':
+        return Colors.blue;
+      case 'resolved':
+        return Colors.green;
+      default:
+        return Colors.grey;
+    }
+  }
 }
