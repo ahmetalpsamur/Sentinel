@@ -1,0 +1,5 @@
+kafka-python
+opencv-python-headless
+numpy
+redis
+python-dotenv

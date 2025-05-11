@@ -16,13 +16,21 @@ from concurrent.futures import ThreadPoolExecutor
 
 executor = ThreadPoolExecutor(max_workers=4)
 
+logger = setup_logger()
 
-def save_to_redis(frame_id, data, redis_client):
+consumer = create_consumer("video_uploaded")
+
+
+def save_to_redis(frame_id,frame_index, data, redis_client):
     if not redis_client:
         logger.warning("🚫 Redis istemcisi mevcut değil. Frame saklanamadı.")
         return
     try:
+
         redis_client.setex(f"frame:{frame_id}", 300, json.dumps(data))
+
+
+        redis_client.setex(f"frame_index:{frame_index}", 300, frame_id)
         logger.debug(f"✅ Redis'e kaydedildi: frame:{frame_id}")
     except Exception as e:
         logger.error(f"❌ Redis'e yazarken hata: {e}")
@@ -35,11 +43,6 @@ def send_to_kafka(data, producer):
         logger.info(f"Kafka'ya mesaj gönderildi. Video ID: {data['src_video_id']}, Frame ID: {data['frame_id']}")
     except Exception as e:
         logger.error(f"Kafka gönderimi başarısız: {e}")
-
-
-logger = setup_logger("splitter", "logs/splitter.log")
-
-consumer = create_consumer("video_uploaded")
 
 def encode_frame_to_base64(frame):
     _, buffer = cv2.imencode('.jpg', frame)
@@ -98,7 +101,7 @@ def process_video(video_path):
             "frame_index": index,
             "src_video_id": video_id
         }
-        executor.submit(save_to_redis, frame_id, redis_data,redis_client)
+        executor.submit(save_to_redis, frame_id,index, redis_data,redis_client)
         executor.submit(send_to_kafka, ai_data,producer)
         index += 1
 

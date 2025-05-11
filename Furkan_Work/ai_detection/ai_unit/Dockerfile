@@ -1,22 +1,38 @@
-# 1. Hafif ama yeterli bir Python imajı
-FROM python:3.10-slim
+# CUDA 11.4/11.5 ile uyumlu TensorRT 8.3.1 içeren resmi NVIDIA imajı
+FROM nvcr.io/nvidia/tensorrt:23.06-py3
 
-# 2. Sistem bağımlılıklarını kur
-RUN apt-get update && apt-get install -y \
-    libglib2.0-0 libsm6 libxext6 libxrender-dev gcc && \
-    rm -rf /var/lib/apt/lists/*
-
-# 3. Çalışma dizini ayarla
+# Çalışma dizini
 WORKDIR /app
 
-# 4. requirements.txt'i önce kopyala (sadece bu dosya!)
-COPY requirements.txt .
+# Sistem bağımlılıkları (OpenCV ve FFmpeg için gerekli)
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    libgl1 \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    ffmpeg \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
-# 5. pip install'ı önden yap (bu layer cache'lenir!)
+RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+# Python bağımlılıkları (önce requirements.txt)
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 6. Geri kalan tüm dosyaları ekle (sadece bu değişirse yukarısı tekrar etmez)
+# TensorRT destekli inference için PyCUDA, Polygraphy ve yardımcılar
+RUN pip install --no-cache-dir pycuda polygraphy colored
+
+# Uygulama dosyalarını kopyala
 COPY . .
 
-# 7. Giriş noktası
-CMD ["python", "ai_unit_consumer.py"]
+# Gerekli klasörler ve izinler
+RUN mkdir -p /app/logs /app/frames && chmod -R a+rw /app/logs /app/frames
+
+# Ortam değişkenleri
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=/app
+ENV NVIDIA_VISIBLE_DEVICES=all
+
+# Giriş noktası
+CMD ["python", "main.py"]

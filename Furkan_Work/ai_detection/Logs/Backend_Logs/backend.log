@@ -1,0 +1,11 @@
+2025-05-11 17:22:28,997 — INFO — ✅ Kafka producer başarıyla başlatıldı.
+2025-05-11 17:23:14,573 — INFO — Video alındı.
+2025-05-11 17:23:14,686 — INFO — Video kaydedildi: /app/data/uploaded_videos/dc9a32f1-8e8f-446b-99fb-a003827ad0ea_Video2.mp4
+2025-05-11 17:23:14,701 — INFO — Kafka'ya mesaj gönderildi. Video ID: dc9a32f1-8e8f-446b-99fb-a003827ad0ea
+2025-05-11 17:35:32,576 — INFO — ✅ Kafka producer başarıyla başlatıldı.
+2025-05-11 17:36:13,291 — INFO — Video alındı.
+2025-05-11 17:36:13,407 — INFO — Video kaydedildi: /app/data/uploaded_videos/f574f7cc-8be3-4c34-8df9-1a0fcf5f109e_Video2.mp4
+2025-05-11 17:36:13,422 — INFO — Kafka'ya mesaj gönderildi. Video ID: f574f7cc-8be3-4c34-8df9-1a0fcf5f109e
+2025-05-11 17:58:42,458 — INFO — Video alındı.
+2025-05-11 17:58:42,567 — INFO — Video kaydedildi: /app/data/uploaded_videos/0bfff743-9eb1-41ea-884d-06e9fb75027d_Video2.mp4
+2025-05-11 17:58:42,600 — INFO — Kafka'ya mesaj gönderildi. Video ID: 0bfff743-9eb1-41ea-884d-06e9fb75027d

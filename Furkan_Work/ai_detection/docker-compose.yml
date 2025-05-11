@@ -1,116 +1,118 @@
+version: '3.8'
+
 services:
   fastapi_backend:
-    build: ./backend
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
     volumes:
       - ./data:/app/data
-      - ./backend/logs:/app/logs
-      - ./data:/app/data
-    depends_on:
-      - kafka
-      - redis
-    env_file:
-      - .env
-
-  frame_splitter:
-    build: ./frame_splitter
-    volumes:
-      - ./data:/app/data
-      - ./backend/logs:/app/logs
-      - ./data:/app/data
-      - ./shared:/app/shared 
-    depends_on:
-      kafka:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - ./Logs/Backend_Logs:/app/Backend_Logs
+      - ./shared:/app/shared
     environment:
       - PYTHONPATH=/app/shared
-    env_file:
-      - .env
-
-  ai_unit_1:
-    build: ./ai_unit
-    volumes:
-      - ./ai_unit/frame:/app/frame
-      - ./backend/logs:/app/logs
-      - ./ai_unit/models:/app/models
-      - ./ai_unit/redis_config:/app/redis_config
     depends_on:
       kafka:
         condition: service_healthy
       redis:
         condition: service_healthy
-    environment:
-      - KAFKA_BOOTSTRAP=kafka:9092
-      - PYTHONPATH=/app
+      init:
+        condition: service_completed_successfully
     env_file:
       - .env
-
-  ai_unit_2:
-    build: ./ai_unit
+    restart: unless-stopped
+    
+  frame_splitter:
+    build:
+      context: ./frame_splitter
+      dockerfile: Dockerfile
     volumes:
-      - ./ai_unit/frame:/app/frame
-      - ./backend/logs:/app/logs
-      - ./ai_unit/models:/app/models
-      - ./ai_unit/redis_config:/app/redis_config
+      - ./data:/app/data
+      - ./Logs/FS_Logs:/app/FS_Logs
+      - ./shared:/app/shared
+    environment:
+      - PYTHONPATH=/app/shared
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
     depends_on:
       kafka:
         condition: service_healthy
       redis:
         condition: service_healthy
-    environment:
-      - KAFKA_BOOTSTRAP=kafka:9092
-      - PYTHONPATH=/app
+      init:
+        condition: service_completed_successfully
     env_file:
       - .env
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
 
-  ai_unit_3:
-    build: ./ai_unit
+  ai_unit:
+    image: ai-unit-gpu
+    build:
+      context: ./ai_unit
+      dockerfile: Dockerfile
+      args:
+        - NVIDIA_DRIVER_VERSION=470
+    runtime: nvidia
+    restart: unless-stopped
     volumes:
-      - ./ai_unit/frame:/app/frame
-      - ./backend/logs:/app/logs
+      - ./Logs/AI_Logs:/app/AI_Logs
       - ./ai_unit/models:/app/models
-      - ./ai_unit/redis_config:/app/redis_config
+      - ./shared:/app/shared
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - REDIS_HOST=redis
+      - PYTHONPATH=/app/shared
+      - WORKER_ID=${HOSTNAME}
+      - KAFKA_GROUP_ID=ai-unit-group
+    env_file:
+      - .env
     depends_on:
       kafka:
         condition: service_healthy
       redis:
         condition: service_healthy
-    environment:
-      - KAFKA_BOOTSTRAP=kafka:9092
-      - PYTHONPATH=/app
-    env_file:
-      - .env
-
-  ai_unit_4:
-    build: ./ai_unit
-    volumes:
-      - ./ai_unit/frame:/app/frame
-      - ./backend/logs:/app/logs
-      - ./ai_unit/models:/app/models
-      - ./ai_unit/redis_config:/app/redis_config
-    depends_on:
-      kafka:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    environment:
-      - KAFKA_BOOTSTRAP=kafka:9092
-      - PYTHONPATH=/app
-    env_file:
-      - .env
+      init:
+        condition: service_completed_successfully
+    deploy:
+      replicas: 4
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+        limits:
+          cpus: '4'
+          memory: 8G
+    healthcheck:
+      test: ["CMD", "python", "-c", "import torch; assert torch.cuda.is_available()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   redis:
-    image: redis:7
+    image: redis:7-alpine
     ports:
       - "6379:6379"
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis_data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 3s
       retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.2.1
@@ -118,21 +120,89 @@ services:
       - "2181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    healthcheck:
+      test: ["CMD", "zkOk.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
 
   kafka:
     image: confluentinc/cp-kafka:7.2.1
     ports:
       - "9092:9092"
+      - "9999:9999" # JMX port
     depends_on:
       - zookeeper
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092 
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_JMX_PORT: 9999
+      KAFKA_JMX_HOSTNAME: localhost
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    volumes:
+      - kafka_data:/var/lib/kafka/data
     healthcheck:
-      test: ["CMD", "kafka-topics", "--bootstrap-server", "localhost:9092", "--list"]
+      test: |
+        bash -c '\
+        kafka-topics --bootstrap-server localhost:9092 --list && \
+        echo "Kafka is ready" || exit 1\
+        '
       interval: 10s
-      timeout: 5s
+      timeout: 20s
       retries: 10
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+  init:
+    build:
+      context: ./init
+      dockerfile: Dockerfile
+    depends_on:
+      kafka:
+        condition: service_healthy
+    volumes:
+      - ./data:/app/data
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    restart: "no"
+
+  decision_unit:
+      build:
+        context: ./decision_unit
+        dockerfile: Dockerfile
+      volumes:
+        - ./data:/app/data
+        - ./Logs/DU_Logs:/app/DU_Logs
+        - ./data/segment_videos:/app/data/segment_videos
+      environment:
+        - PYTHONPATH=/app
+        - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+        - REDIS_HOST=redis
+        - REDIS_PORT=6379
+        - REDIS_DB=0
+      depends_on:
+        kafka:
+          condition: service_healthy
+        redis:
+          condition: service_healthy
+        init:
+          condition: service_completed_successfully
+      restart: unless-stopped
+volumes:
+  redis_data:
+    driver: local
+  kafka_data:
+    driver: local

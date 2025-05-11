@@ -4,7 +4,7 @@ from logger import setup_logger
 from kafka import KafkaProducer
 
 app = FastAPI()
-logger = setup_logger("backend", "logs/backend.log")
+logger = setup_logger()
 
 DATA_DIR = os.path.join(os.getcwd(), "data", "uploaded_videos")
 os.makedirs(DATA_DIR, exist_ok=True)
@@ -33,6 +33,7 @@ def init_kafka():
 
 @app.post("/upload_video/")
 async def upload_video(file: UploadFile = File(...)):
+    logger.info("Video alındı.")
     if not file.filename.lower().endswith((".mp4", ".mov", ".avi", ".mkv")):
         logger.warning(f"Geçersiz dosya türü: {file.filename}")
         raise HTTPException(status_code=400, detail="Only video files with common extensions are allowed.")
