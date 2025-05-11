@@ -1,13 +1,14 @@
-"""
 import cv2
+import tkinter as tk
+from tkinter import filedialog, messagebox
 from ultralytics import YOLO
+import os
 
+# Fonksiyonlar (daha önce tanımladığın fonksiyonlar biraz sadeleştirildi)
 
-def detect_objects_in_photo(image_path):
+def detect_objects_in_photo_gui(image_path):
     image_orig = cv2.imread(image_path)
-
-    yolo_model = YOLO('./Models/otherProject2.pt')
-
+    yolo_model = YOLO('./Models/knifeModel(epoc=50,img=1280,8000).pt')
     results = yolo_model(image_orig)
 
     for result in results:
@@ -19,26 +20,27 @@ def detect_objects_in_photo(image_path):
         for pos, detection in enumerate(detections):
             if conf[pos] >= 0.5:
                 xmin, ymin, xmax, ymax = detection
-                label = f"{classes[int(cls[pos])]} {conf[pos]:.2f}"
-                color = (0, int(cls[pos]), 255)
+                confidence_percent = conf[pos] * 100
+                label = f"{classes[int(cls[pos])]} {confidence_percent:.1f}%"
+                color = (0, int(cls[pos]) * 20 % 256, 255)
                 cv2.rectangle(image_orig, (int(xmin), int(ymin)), (int(xmax), int(ymax)), color, 2)
-                cv2.putText(image_orig, label, (int(xmin), int(ymin) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1,
-                            cv2.LINE_AA)
+                cv2.putText(image_orig, label, (int(xmin), int(ymin) - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1, cv2.LINE_AA)
 
-    result_path = "./imgs/Test/teste.jpg"
+    result_path = "./Results/result.jpg"
+    os.makedirs("./Results", exist_ok=True)
     cv2.imwrite(result_path, image_orig)
-    return result_path
+    messagebox.showinfo("Fotoğraf İşlendi", f"Kaydedildi: {result_path}")
 
-
-def detect_objects_in_video(video_path):
-
+def detect_objects_in_video_gui(video_path):
     yolo_model = YOLO('./Models/knifeModel(epoc=50,img=1280,4000).pt')
-
     video_capture = cv2.VideoCapture(video_path)
+
     width = int(video_capture.get(3))
     height = int(video_capture.get(4))
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    result_video_path = "detected_objects_video2.avi"
+    result_video_path = "./Results/result_video.avi"
+    os.makedirs("./Results", exist_ok=True)
     out = cv2.VideoWriter(result_video_path, fourcc, 20.0, (width, height))
 
     while True:
@@ -52,273 +54,90 @@ def detect_objects_in_video(video_path):
             cls = result.boxes.cls
             conf = result.boxes.conf
             detections = result.boxes.xyxy
-
             for pos, detection in enumerate(detections):
                 if conf[pos] >= 0.5:
                     xmin, ymin, xmax, ymax = detection
-                    label = f"{classes[int(cls[pos])]} {conf[pos]:.2f}"
-                    color = (0, int(cls[pos]), 255)
+                    label = f"{classes[int(cls[pos])]} {conf[pos]*100:.1f}%"
+                    color = (0, int(cls[pos]) * 20 % 256, 255)
                     cv2.rectangle(frame, (int(xmin), int(ymin)), (int(xmax), int(ymax)), color, 2)
-                    cv2.putText(frame, label, (int(xmin), int(ymin) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1,
-                                cv2.LINE_AA)
+                    cv2.putText(frame, label, (int(xmin), int(ymin) - 10),
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1, cv2.LINE_AA)
 
         out.write(frame)
+
     video_capture.release()
     out.release()
+    messagebox.showinfo("Video İşlendi", f"Kaydedildi: {result_video_path}")
 
-    return result_video_path
-
-
-def detect_objects_and_plot(path_orig):
-    image_orig = cv2.imread(path_orig)
-
-    yolo_model = YOLO('./Models/otherProject2.pt')
-
-    results = yolo_model(image_orig)
-
-    for result in results:
-        classes = result.names
-        cls = result.boxes.cls
-        conf = result.boxes.conf
-        detections = result.boxes.xyxy
-
-        for pos, detection in enumerate(detections):
-            if conf[pos] >= 0.5:
-                xmin, ymin, xmax, ymax = detection
-                label = f"{classes[int(cls[pos])]} {conf[pos]:.2f}"
-                color = (0, int(cls[pos]), 255)
-                cv2.rectangle(image_orig, (int(xmin), int(ymin)), (int(xmax), int(ymax)), color, 2)
-                cv2.putText(image_orig, label, (int(xmin), int(ymin) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1,
-                            cv2.LINE_AA)
-
-    cv2.imshow("Teste", image_orig)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
-def detect_objects_from_camera():
-    # Kamerayı aç (0 genellikle varsayılan kameradır, başka bir kameraya erişim için farklı numara kullanılabilir)
-    video_capture = cv2.VideoCapture(0)  # Kameranın indeksini buradan değiştirebilirsiniz (örneğin 1, 2 vs.)
-    yolo_model = YOLO('./Models/knifeModel(epoc=50,img=1280,4000).pt')
+def detect_objects_from_camera_gui():
+    video_capture = cv2.VideoCapture(0)
+    yolo_model = YOLO('./Models/yolov8-kg-best.pt')
     if not video_capture.isOpened():
-        print("Kamera açılamadı!")
+        messagebox.showerror("Hata", "Kamera açılamadı!")
         return
 
-    # Kamera çözünürlüğünü al
-    width = int(video_capture.get(3))
-    height = int(video_capture.get(4))
-
-    # Video kaydını çıkış için ayarla
-    fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    result_video_path = "detected_objects_camera.avi"
-    out = cv2.VideoWriter(result_video_path, fourcc, 20.0, (width, height))
-
     while True:
-        # Kameradan bir kare oku
         ret, frame = video_capture.read()
         if not ret:
             break
 
-        # YOLO modelini kullanarak nesne tespiti yap
         results = yolo_model(frame)
-
         for result in results:
             classes = result.names
             cls = result.boxes.cls
             conf = result.boxes.conf
             detections = result.boxes.xyxy
-
             for pos, detection in enumerate(detections):
                 if conf[pos] >= 0.5:
                     xmin, ymin, xmax, ymax = detection
-                    label = f"{classes[int(cls[pos])]} {conf[pos]:.2f}"
-                    color = (0, int(cls[pos]), 255)
+                    label = f"{classes[int(cls[pos])]} {conf[pos]*100:.1f}%"
+                    color = (0, int(cls[pos]) * 20 % 256, 255)
                     cv2.rectangle(frame, (int(xmin), int(ymin)), (int(xmax), int(ymax)), color, 2)
-                    cv2.putText(frame, label, (int(xmin), int(ymin) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1,
-                                cv2.LINE_AA)
+                    cv2.putText(frame, label, (int(xmin), int(ymin) - 10),
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1, cv2.LINE_AA)
 
-        # İşlenmiş kareyi videoya yaz
-        out.write(frame)
-
-        # İşlenmiş kareyi ekranda göster
         cv2.imshow("Kamera ile Nesne Tespiti", frame)
-
-        # Çıkmak için 'q' tuşuna basılmasını bekle
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-    # Kamerayı ve yazıcıyı serbest bırak
     video_capture.release()
-    out.release()
-
     cv2.destroyAllWindows()
-    return result_video_path
 
-if __name__ == "__main__":
-    # Kullanmak istediğin fonksiyonu çağır
-    # Örnek: Fotoğraf üzerinde nesne tespiti
-    # photo_path = "deneme.jpg"  # Buraya kendi test fotoğrafını koy
-    # result_photo = detect_objects_in_photo(photo_path)
-    # print(f"İşlenmiş fotoğraf kaydedildi: {result_photo}")
+# GUI Arayüzü
 
-    # Eğer video denemek istersen:
-    video_path = "./TestData/knifeTestVideo.mp4"
-    result_video = detect_objects_in_video(video_path)
-    print(f"İşlenmiş video kaydedildi: {result_video}")
+def select_photo():
+    file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.jpg *.png *.jpeg")])
+    if file_path:
+        detect_objects_in_photo_gui(file_path)
 
-    #result_video = detect_objects_from_camera()
-    #print(f"İşlenmiş video kaydedildi: {result_video}")
+def select_video():
+    file_path = filedialog.askopenfilename(filetypes=[("Video files", "*.mp4 *.avi")])
+    if file_path:
+        detect_objects_in_video_gui(file_path)
 
-    # Eğer sadece görüntü çizdirip ekranda göstermek istersen:
-    # detect_objects_and_plot(photo_path)
-"""
+def open_camera():
+    detect_objects_from_camera_gui()
 
-from ultralytics import YOLO
-import cv2
-import numpy as np
-import time
+# Arayüz Oluştur
+root = tk.Tk()
+root.title("YOLOv8 Nesne Tespiti")
+root.geometry("400x250")
 
+title = tk.Label(root, text="YOLOv8 Object Detection GUI", font=("Helvetica", 16, "bold"))
+title.pack(pady=10)
 
-# DaCoLT benzeri ön işleme fonksiyonu
-def brightness_guided_preprocessing(frame, darken_factor=0.7):
-    # HSV'ye çevir
-    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+btn1 = tk.Button(root, text="📷 Fotoğraf Seç ve Tespit Et", command=select_photo, height=2, width=30)
+btn1.pack(pady=5)
 
-    # V kanalını azalt (karartma)
-    hsv[:, :, 2] = np.clip(hsv[:, :, 2] * darken_factor, 0, 255)
+btn2 = tk.Button(root, text="🎞️ Video Seç ve Tespit Et", command=select_video, height=2, width=30)
+btn2.pack(pady=5)
 
-    # Geri BGR'ye çevir
-    darkened = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+btn3 = tk.Button(root, text="📡 Kameradan Gerçek Zamanlı Tespit", command=open_camera, height=2, width=30)
+btn3.pack(pady=5)
 
-    # Gri tona çevir
-    gray = cv2.cvtColor(darkened, cv2.COLOR_BGR2GRAY)
-
-    # CLAHE uygulayarak kontrast artır
-    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-    contrast_enhanced = clahe.apply(gray)
-
-    # Tekrar 3 kanala çıkar (model renkli görüntü bekliyor olabilir)
-    processed_frame = cv2.cvtColor(contrast_enhanced, cv2.COLOR_GRAY2BGR)
-
-    return processed_frame
-
-
-# Model yükle
-model = YOLO('../Models/knifeModel(epoc=50,img=1280,4000).pt')
-
-cap = cv2.VideoCapture(0)
-
-
-prev_time = 0
-class_names = model.names
-
-while cap.isOpened():
-    ret, frame = cap.read()
-    if not ret:
-        break
-
-    # 📸 Ön İşleme: DaCoLT
-    processed_frame = brightness_guided_preprocessing(frame)
-
-    # Model ile tahmin
-    results = model.predict(
-        source=processed_frame,
-        conf=0.4,
-        iou=0.4,
-        imgsz=680,
-        show=False,
-        verbose=False
-    )
-
-    result = results[0]
-    boxes = result.boxes
-    annotated_frame = frame.copy()  # Orijinal frame üzerine çizim yapılacak
-
-    for box in boxes:
-        cls_id = int(box.cls[0])
-        conf = float(box.conf[0])
-        label = f"{class_names[cls_id]}: %{conf * 100:.1f}"
-        x1, y1, x2, y2 = map(int, box.xyxy[0])
-
-        cv2.rectangle(annotated_frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
-        cv2.putText(annotated_frame, label, (x1, y1 - 10),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-
-    curr_time = time.time()
-    fps = 1 / (curr_time - prev_time) if prev_time != 0 else 0
-    prev_time = curr_time
-
-    cv2.putText(annotated_frame, f"FPS: {fps:.2f}", (10, 30),
-                cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
-
-    cv2.imshow("YOLOv8 Live Detection (Preprocessed)", annotated_frame)
-
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-cap.release()
-cv2.destroyAllWindows()
+root.mainloop()
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-"""
-
-
-# İki farklı modeli yükle
-model1 = YOLO("yolov8l.pt")  # Large model, COCO dataset ile eğitilmiş
-model2 = YOLO("bestGun.pt")  # Silah tespiti için özel model
-
-# Ekran yakalama için mss başlat
-sct = mss.mss()
-mon = sct.monitors[1]
-
-# Pencere ayarları (Çeyrek ekran boyutunda aç)
-window_name = "Multi YOLO Detection"
-cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
-cv2.resizeWindow(window_name, mon["width"] // 2, mon["height"] // 2)
-
-while True:
-    # Ekran görüntüsünü al
-    screen = sct.grab(mon)
-
-    # Görüntüyü numpy array'e çevir ve renk dönüşümü yap
-    frame = np.array(screen)
-    frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)
-
-    # İlk modelin tahmini (Genel nesne tanıma)
-    results1 = model1.predict(frame, imgsz=1280, conf=0.3, iou=0.3)
-
-    # İkinci modelin tahmini (Silah tespiti)
-    results2 = model2.predict(frame, imgsz=1280, conf=0.25, iou=0.3)
-
-    # Sonuçları çizebilmek için görüntüyü kopyala
-    output_frame = frame.copy()
-
-    # İlk modelin tespit ettiği nesneleri çiz
-    for result in results1:
-        output_frame = result.plot()
-
-    # İkinci modelin tespit ettiği nesneleri çiz
-    for result in results2:
-        output_frame = result.plot()
-
-    # OpenCV ile göster
-    cv2.imshow(window_name, output_frame)
-
-    # Çıkış için ESC tuşuna bas
-    if cv2.waitKey(1) & 0xFF == 27:
-        break
-
-cv2.destroyAllWindows()
-"""
