@@ -213,6 +213,8 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> {
                     children: [
                       CrimeProbabilityIndicator(
                         probability: widget.video.crimeProbability,
+                        type: widget.video.crimeType,
+                        weaponType: widget.video.weaponType,
                       ),
                       const SizedBox(width: 16),
                       Icon(

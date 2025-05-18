@@ -6,6 +6,11 @@ class CrimeVideo {
   final String description;
   final String videoUrl;
   final double crimeProbability;
+
+  final String weaponType;
+  final double weaponProbability;
+
+
   final LatLng location;
   final DateTime timestamp;
   final String crimeType;
@@ -16,6 +21,10 @@ class CrimeVideo {
     required this.description,
     required this.videoUrl,
     required this.crimeProbability,
+
+    required this.weaponType,
+    required this.weaponProbability,
+
     required this.location,
     required this.timestamp,
     required this.crimeType,

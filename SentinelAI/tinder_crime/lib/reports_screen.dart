@@ -196,6 +196,8 @@ class _ReportedCrimesScreenState extends State<ReportedCrimesScreen> {
                     ),
                     leading: CrimeProbabilityIndicator(
                       probability: reportedCrime.crimeVideo.crimeProbability,
+                      type: reportedCrime.crimeVideo.crimeType,
+                      weaponType: reportedCrime.crimeVideo.weaponType,
                     ),
                     trailing: IconButton(
                       icon: const Icon(Icons.edit),

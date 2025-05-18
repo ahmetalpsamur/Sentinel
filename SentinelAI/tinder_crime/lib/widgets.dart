@@ -74,6 +74,8 @@ class _VideoCardState extends State<VideoCard> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isSmallScreen = size.width < 600;
+    final hasWeaponInfo = widget.video.weaponType != null &&
+        widget.video.weaponProbability != null;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -135,12 +137,28 @@ class _VideoCardState extends State<VideoCard> {
                   ),
                 ),
 
-                // Crime Probability
+                // Indicators Row
                 Positioned(
                   bottom: 12,
                   left: 12,
-                  child: CrimeProbabilityIndicator(
-                      probability: widget.video.crimeProbability),
+                  right: 12,
+                  child: Row(
+                    children: [
+                      CrimeProbabilityIndicator(
+                        probability: widget.video.crimeProbability,
+                        type: 'crime',
+                      ),
+                      if (hasWeaponInfo)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8),
+                          child: CrimeProbabilityIndicator(
+                            probability: widget.video.weaponProbability!,
+                            type: 'weapon',
+                            weaponType: widget.video.weaponType,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
 
                 // Play/Pause Button
@@ -220,16 +238,43 @@ class _VideoCardState extends State<VideoCard> {
 
                   const SizedBox(height: 8),
 
-                  // Description
-                  Text(
-                    widget.video.description,
-                    style: GoogleFonts.rajdhani(
-                      color: Colors.grey[400],
-                      fontSize: isSmallScreen ? 13 : 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                  // Description and Weapon Info
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.video.description,
+                        style: GoogleFonts.rajdhani(
+                          color: Colors.grey[400],
+                          fontSize: isSmallScreen ? 13 : 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      if (hasWeaponInfo)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 6),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Iconsax.danger,
+                                size: 14,
+                                color: Colors.red[700],
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                '${widget.video.weaponType} (${(widget.video.weaponProbability! * 100).toStringAsFixed(0)}%)',
+                                style: GoogleFonts.rajdhani(
+                                  color: Colors.red[400],
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
                   ),
 
                   const SizedBox(height: 12),
@@ -312,8 +357,15 @@ class _VideoCardState extends State<VideoCard> {
 
 class CrimeProbabilityIndicator extends StatelessWidget {
   final double probability;
+  final String type; // 'crime' or 'weapon'
+  final String? weaponType;
 
-  const CrimeProbabilityIndicator({super.key, required this.probability});
+  const CrimeProbabilityIndicator({
+    super.key,
+    required this.probability,
+    required this.type,
+    this.weaponType,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -321,6 +373,17 @@ class CrimeProbabilityIndicator extends StatelessWidget {
       if (probability > 0.8) return Colors.red[700]!;
       if (probability > 0.6) return Colors.orange[700]!;
       return Colors.yellow[700]!;
+    }
+
+    IconData getIcon() {
+      return type == 'weapon' ? Iconsax.danger : Iconsax.warning_2;
+    }
+
+    String getText() {
+      if (type == 'weapon' && weaponType != null) {
+        return '${(probability * 100).toStringAsFixed(0)}%';
+      }
+      return '${(probability * 100).toStringAsFixed(0)}%';
     }
 
     return Container(
@@ -337,13 +400,13 @@ class CrimeProbabilityIndicator extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            Iconsax.warning_2,
+            getIcon(),
             color: getColor(),
             size: 16,
           ),
           const SizedBox(width: 4),
           Text(
-            '${(probability * 100).toStringAsFixed(0)}%',
+            getText(),
             style: GoogleFonts.orbitron(
               color: Colors.white,
               fontWeight: FontWeight.w700,

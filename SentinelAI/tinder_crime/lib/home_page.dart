@@ -17,6 +17,10 @@ class CrimeDetectionHomePage extends StatefulWidget {
       description: 'Possible car break-in detected at 3:15 AM',
       videoUrl: 'https://storage.googleapis.com/shieldir_videos/berkayTest.mp4',
       crimeProbability: 0.10,
+
+      weaponProbability: 0.10,
+      weaponType: "Gun",
+
       location: const LatLng(38.374564, 27.039499),
       timestamp: DateTime.now().subtract(const Duration(hours: 2)),
       crimeType: 'Theft',
@@ -27,6 +31,10 @@ class CrimeDetectionHomePage extends StatefulWidget {
       description: 'Two individuals in physical confrontation',
       videoUrl: 'https://samplelib.com/lib/preview/mp4/sample-5s.mp4',
       crimeProbability: 0.92,
+
+      weaponProbability: 0.60,
+      weaponType: "Knife",
+
       location: const LatLng(38.361564, 27.539499),
       timestamp: DateTime.now().subtract(const Duration(days: 1)),
       crimeType: 'Assault',
@@ -37,6 +45,10 @@ class CrimeDetectionHomePage extends StatefulWidget {
       description: 'Individual spray painting on walls',
       videoUrl: 'https://samplelib.com/lib/preview/mp4/sample-10s.mp4',
       crimeProbability: 0.78,
+
+      weaponProbability: 0.10,
+      weaponType: "Gun",
+
       location: const LatLng(38.304064, 27.009099),
       timestamp: DateTime.now().subtract(const Duration(days: 3)),
       crimeType: 'Vandalism',
@@ -47,6 +59,10 @@ class CrimeDetectionHomePage extends StatefulWidget {
       description: 'Person taking package from residential porch',
       videoUrl: 'https://samplelib.com/lib/preview/mp4/sample-15s.mp4',
       crimeProbability: 0.85,
+
+      weaponProbability: 0.10,
+      weaponType: "Gun",
+
       location: const LatLng(38.304564, 26.039409),
       timestamp: DateTime.now().subtract(const Duration(days: 5)),
       crimeType: 'Theft',
