@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'models.dart';
 import 'videos_screen.dart';
 import 'reports_screen.dart';
@@ -77,45 +79,133 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
     setState(() {
       _crimeVideos.removeWhere((crime) => crime.id == crimeId);
     });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Crime report submitted',
+            style: GoogleFonts.rajdhani(fontWeight: FontWeight.w500)),
+        backgroundColor: Colors.red[700],
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final isSmallScreen = size.width < 600;
+
     return Scaffold(
+      backgroundColor: Colors.grey[900],
       appBar: AppBar(
-        title: const Text('Crime Swiper'),
-      ),
-      body: _selectedIndex == 0
-          ? VideoListScreen(
-        videos: _crimeVideos,
-        isAuthority: widget.isAuthority,
-        onCrimeReported: _removeReportedCrime,
-      )
-          : _selectedIndex == 1
-          ? const ReportedCrimesScreen()
-          : AnalyticsScreen(
-        videos: widget.initialCrimeVideos,
-        isAuthority: widget.isAuthority,
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.video_library),
-            label: 'Videos',
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text(
+          'SHIELDIR',
+          style: GoogleFonts.orbitron(
+            color: Colors.red[700],
+            fontSize: isSmallScreen ? 20 : 24,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 1.5,
           ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.report),
-            label: 'Reports',
+        ),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(Iconsax.notification, color: Colors.grey[400]),
+            onPressed: () {},
           ),
-          if (widget.isAuthority)
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.analytics),
-              label: 'Analytics',
-            ),
         ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue[800],
-        onTap: _onItemTapped,
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment.topLeft,
+            radius: 1.5,
+            colors: [
+              Colors.grey[850]!,
+              Colors.grey[900]!,
+            ],
+          ),
+        ),
+        child: _selectedIndex == 0
+            ? VideoListScreen(
+          videos: _crimeVideos,
+          isAuthority: widget.isAuthority,
+          onCrimeReported: _removeReportedCrime,
+        )
+            : _selectedIndex == 1
+            ? const ReportedCrimesScreen()
+            : AnalyticsScreen(
+          videos: widget.initialCrimeVideos,
+          isAuthority: widget.isAuthority,
+        ),
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey[850],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.5),
+              blurRadius: 20,
+              spreadRadius: 2,
+            ),
+          ],
+          border: Border(
+            top: BorderSide(
+              color: Colors.grey[800]!.withOpacity(0.5),
+              width: 0.5,
+            ),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: BottomNavigationBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            items: [
+              BottomNavigationBarItem(
+                icon: Icon(
+                  _selectedIndex == 0 ? Iconsax.video : Iconsax.video,
+                  color: _selectedIndex == 0 ? Colors.red[700] : Colors.grey[500],
+                ),
+                label: 'Videos',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(
+                  _selectedIndex == 1 ? Iconsax.warning_2 : Iconsax.warning_2,
+                  color: _selectedIndex == 1 ? Colors.red[700] : Colors.grey[500],
+                ),
+                label: 'Reports',
+              ),
+              if (widget.isAuthority)
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    _selectedIndex == 2 ? Iconsax.chart : Iconsax.chart_2,
+                    color: _selectedIndex == 2 ? Colors.red[700] : Colors.grey[500],
+                  ),
+                  label: 'Analytics',
+                ),
+            ],
+            currentIndex: _selectedIndex,
+            selectedItemColor: Colors.red[700],
+            unselectedItemColor: Colors.grey[500],
+            selectedLabelStyle: GoogleFonts.rajdhani(
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
+            ),
+            unselectedLabelStyle: GoogleFonts.rajdhani(
+              fontWeight: FontWeight.w500,
+              fontSize: 12,
+            ),
+            showSelectedLabels: true,
+            showUnselectedLabels: true,
+            type: BottomNavigationBarType.fixed,
+            onTap: _onItemTapped,
+          ),
+        ),
       ),
     );
   }
