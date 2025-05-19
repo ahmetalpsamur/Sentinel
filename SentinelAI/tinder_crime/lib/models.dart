@@ -49,12 +49,13 @@ class ReportedCrime {
 
 class ReportedCrimesManager {
   static final List<ReportedCrime> _reportedCrimes = [];
-  static final List<String> _officers = [
-    'Officer Smith',
-    'Detective Johnson',
-    'Sergeant Williams',
-    'Lieutenant Brown'
-  ];
+  static final Map<String, String> _officers = {
+    'Officer Marifoğlu': 'officer.smith@police.gov',
+    'Officer Arda': 'officer.smith@police.gov',
+    'Detective Bulut': 'fikribarcabulut@gmail.com',
+    'Sergeant Samur': 'sergeant.williams@police.gov',
+    'Lieutenant Uzunbayır': 'lieutenant.brown@police.gov'
+  };
 
   static void reportCrime(CrimeVideo crime) {
     _reportedCrimes.add(ReportedCrime(
@@ -64,7 +65,8 @@ class ReportedCrimesManager {
   }
 
   static List<ReportedCrime> get reportedCrimes => _reportedCrimes;
-  static List<String> get officers => _officers;
+  static List<String> get officers => _officers.keys.toList();
+  static String? getOfficerEmail(String officerName) => _officers[officerName];
 
   static void updateStatus(String crimeId, String newStatus, {String? notes, String? officer}) {
     final crime = _reportedCrimes.firstWhere((c) => c.crimeVideo.id == crimeId);
