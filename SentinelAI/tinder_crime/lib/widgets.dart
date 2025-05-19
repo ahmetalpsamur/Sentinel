@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:media_kit/media_kit.dart';
+import 'package:media_kit_video/media_kit_video.dart';
 import 'models.dart';
 import 'videos_screen.dart';
 
@@ -22,39 +23,68 @@ class VideoCard extends StatefulWidget {
 }
 
 class _VideoCardState extends State<VideoCard> {
-  late VideoPlayerController _controller;
-  bool _isPlaying = false;
+  late final Player _player;
+  late final VideoController _videoController;
   bool _isInitialized = false;
+  bool _isPlaying = false;
+  bool _hasError = false;
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(widget.video.videoUrl)
-      ..initialize().then((_) {
-        if (mounted) {
-          setState(() {
-            _isInitialized = true;
-          });
-        }
+    // Initialize media_kit
+    MediaKit.ensureInitialized();
+
+    _player = Player();
+    _videoController = VideoController(_player);
+
+    // Setup error handling
+    _player.stream.error.listen((error) {
+      if (mounted) {
+        setState(() {
+          _hasError = true;
+        });
+      }
+    });
+
+    // Setup player initialization
+    _initializePlayer();
+  }
+
+  Future<void> _initializePlayer() async {
+    try {
+      await _player.open(Media(widget.video.videoUrl));
+      if (mounted) {
+        setState(() {
+          _isInitialized = true;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _hasError = true;
+        });
+      }
+    }
+  }
+
+  void _togglePlayPause() {
+    if (_player.state.playing) {
+      _player.pause();
+    } else {
+      _player.play();
+    }
+    if (mounted) {
+      setState(() {
+        _isPlaying = _player.state.playing;
       });
+    }
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _player.dispose();
     super.dispose();
-  }
-
-  void _togglePlayPause() {
-    setState(() {
-      if (_controller.value.isPlaying) {
-        _controller.pause();
-        _isPlaying = false;
-      } else {
-        _controller.play();
-        _isPlaying = true;
-      }
-    });
   }
 
   void _openDetailScreen(BuildContext context) {
@@ -106,8 +136,10 @@ class _VideoCardState extends State<VideoCard> {
                   ),
                   child: AspectRatio(
                     aspectRatio: 16 / 9,
-                    child: _isInitialized
-                        ? VideoPlayer(_controller)
+                    child: _hasError
+                        ? _buildErrorWidget()
+                        : _isInitialized
+                        ? Video(controller: _videoController)
                         : Container(
                       color: Colors.grey[900],
                       child: Center(
@@ -144,10 +176,6 @@ class _VideoCardState extends State<VideoCard> {
                   right: 12,
                   child: Row(
                     children: [
-                      CrimeProbabilityIndicator(
-                        probability: widget.video.crimeProbability,
-                        type: 'crime',
-                      ),
                       if (hasWeaponInfo)
                         Padding(
                           padding: const EdgeInsets.only(left: 8),
@@ -157,12 +185,16 @@ class _VideoCardState extends State<VideoCard> {
                             weaponType: widget.video.weaponType,
                           ),
                         ),
+                      CrimeProbabilityIndicator(
+                        probability: widget.video.crimeProbability,
+                        type: 'crime',
+                      ),
                     ],
                   ),
                 ),
 
                 // Play/Pause Button
-                if (_isInitialized)
+                if (_isInitialized && !_hasError)
                   Positioned.fill(
                     child: Center(
                       child: AnimatedOpacity(
@@ -326,6 +358,39 @@ class _VideoCardState extends State<VideoCard> {
     );
   }
 
+  Widget _buildErrorWidget() {
+    return Container(
+      color: Colors.grey[900],
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Iconsax.video, color: Colors.red[700], size: 48),
+            const SizedBox(height: 16),
+            Text(
+              'Video could not be loaded',
+              style: GoogleFonts.rajdhani(
+                color: Colors.white,
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(height: 8),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red[700],
+              ),
+              onPressed: _initializePlayer,
+              child: Text(
+                'Retry',
+                style: GoogleFonts.rajdhani(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Color _getCrimeTypeColor(String crimeType) {
     switch (crimeType.toLowerCase()) {
       case 'assault':
@@ -370,9 +435,15 @@ class CrimeProbabilityIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color getColor() {
-      if (probability > 0.8) return Colors.red[700]!;
-      if (probability > 0.6) return Colors.orange[700]!;
-      return Colors.yellow[700]!;
+      if (type == 'weapon') {
+        if (probability > 0.8) return Colors.red[700]!;
+        if (probability > 0.6) return Colors.orange[700]!;
+        return Colors.yellow[700]!;
+      } else {
+        if (probability > 0.8) return Colors.red[700]!;
+        if (probability > 0.6) return Colors.orange[700]!;
+        return Colors.yellow[700]!;
+      }
     }
 
     IconData getIcon() {
@@ -381,9 +452,9 @@ class CrimeProbabilityIndicator extends StatelessWidget {
 
     String getText() {
       if (type == 'weapon' && weaponType != null) {
-        return '${(probability * 100).toStringAsFixed(0)}%';
+        return '${weaponType!.toUpperCase()} ${(probability * 100).toStringAsFixed(0)}%';
       }
-      return '${(probability * 100).toStringAsFixed(0)}%';
+      return 'CRIME ${(probability * 100).toStringAsFixed(0)}%';
     }
 
     return Container(

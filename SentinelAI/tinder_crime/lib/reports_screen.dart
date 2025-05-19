@@ -199,6 +199,7 @@ class _ReportedCrimesScreenState extends State<ReportedCrimesScreen> {
                       type: reportedCrime.crimeVideo.crimeType,
                       weaponType: reportedCrime.crimeVideo.weaponType,
                     ),
+
                     trailing: IconButton(
                       icon: const Icon(Icons.edit),
                       onPressed: () => _updateCrimeStatus(reportedCrime),

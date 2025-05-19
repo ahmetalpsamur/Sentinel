@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
@@ -10,65 +12,6 @@ import 'package:latlong2/latlong.dart';
 class CrimeDetectionHomePage extends StatefulWidget {
   final bool isAuthority;
 
-  final List<CrimeVideo> initialCrimeVideos = [
-    CrimeVideo(
-      id: '1',
-      title: 'Suspicious Activity in Parking Lot',
-      description: 'Possible car break-in detected at 3:15 AM',
-      videoUrl: 'https://storage.googleapis.com/shieldir_videos/berkayTest.mp4',
-      crimeProbability: 0.10,
-
-      weaponProbability: 0.10,
-      weaponType: "Gun",
-
-      location: const LatLng(38.374564, 27.039499),
-      timestamp: DateTime.now().subtract(const Duration(hours: 2)),
-      crimeType: 'Theft',
-    ),
-    CrimeVideo(
-      id: '2',
-      title: 'Altercation Near ATM',
-      description: 'Two individuals in physical confrontation',
-      videoUrl: 'https://samplelib.com/lib/preview/mp4/sample-5s.mp4',
-      crimeProbability: 0.92,
-
-      weaponProbability: 0.60,
-      weaponType: "Knife",
-
-      location: const LatLng(38.361564, 27.539499),
-      timestamp: DateTime.now().subtract(const Duration(days: 1)),
-      crimeType: 'Assault',
-    ),
-    CrimeVideo(
-      id: '3',
-      title: 'Vandalism in Subway Station',
-      description: 'Individual spray painting on walls',
-      videoUrl: 'https://samplelib.com/lib/preview/mp4/sample-10s.mp4',
-      crimeProbability: 0.78,
-
-      weaponProbability: 0.10,
-      weaponType: "Gun",
-
-      location: const LatLng(38.304064, 27.009099),
-      timestamp: DateTime.now().subtract(const Duration(days: 3)),
-      crimeType: 'Vandalism',
-    ),
-    CrimeVideo(
-      id: '4',
-      title: 'Package Theft from Porch',
-      description: 'Person taking package from residential porch',
-      videoUrl: 'https://samplelib.com/lib/preview/mp4/sample-15s.mp4',
-      crimeProbability: 0.85,
-
-      weaponProbability: 0.10,
-      weaponType: "Gun",
-
-      location: const LatLng(38.304564, 26.039409),
-      timestamp: DateTime.now().subtract(const Duration(days: 5)),
-      crimeType: 'Theft',
-    ),
-  ];
-
   CrimeDetectionHomePage({super.key, required this.isAuthority});
 
   @override
@@ -77,12 +20,78 @@ class CrimeDetectionHomePage extends StatefulWidget {
 
 class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
   int _selectedIndex = 0;
-  late List<CrimeVideo> _crimeVideos;
+  List<CrimeVideo> _crimeVideos = [];
+  bool _isLoading = true;
+  String _errorMessage = '';
 
   @override
   void initState() {
     super.initState();
-    _crimeVideos = List.from(widget.initialCrimeVideos);
+    _fetchCrimeVideos();
+  }
+
+  Future<void> _fetchCrimeVideos() async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://192.168.1.77/deepseek_json_20250519_2bf957.json'),
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+        final List<dynamic> videosJson = jsonData['videos'];
+
+        setState(() {
+          _crimeVideos = videosJson.map((videoJson) {
+            return CrimeVideo(
+              id: videoJson['id'] ?? '',
+              title: videoJson['title'] ?? 'No Title',
+              description: videoJson['description'] ?? 'No Description',
+              videoUrl: videoJson['videoUrl'] ?? '',
+              crimeProbability: (videoJson['crimeProbability'] ?? 0.0).toDouble(),
+              weaponProbability: (videoJson['weaponProbability'] ?? 0.0).toDouble(),
+              weaponType: videoJson['weaponType'],
+              location: LatLng(
+                (videoJson['latitude'] ?? 0.0).toDouble(),
+                (videoJson['longitude'] ?? 0.0).toDouble(),
+              ),
+              timestamp: DateTime.parse(videoJson['timestamp'] ?? DateTime.now().toString()),
+              crimeType: videoJson['crimeType'] ?? 'Unknown',
+            );
+          }).toList();
+          _isLoading = false;
+        });
+      } else {
+        throw Exception('Failed to load crime videos: ${response.statusCode}');
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = 'Error loading videos: ${e.toString()}';
+      });
+
+      // Fallback to static data if API fails
+      _loadFallbackData();
+    }
+  }
+
+  void _loadFallbackData() {
+    setState(() {
+      _crimeVideos = [
+        CrimeVideo(
+          id: '1',
+          title: 'Suspicious Activity in Parking Lot',
+          description: 'Possible car break-in detected at 3:15 AM',
+          videoUrl: 'https://storage.googleapis.com/shieldir_videos/berkayTest.mp4',
+          crimeProbability: 0.10,
+          weaponProbability: 0.10,
+          weaponType: "Gun",
+          location: const LatLng(38.374564, 27.039499),
+          timestamp: DateTime.now().subtract(const Duration(hours: 2)),
+          crimeType: 'Theft',
+        ),
+        // Diğer statik veriler...
+      ];
+    });
   }
 
   void _onItemTapped(int index) {
@@ -146,7 +155,16 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
             ],
           ),
         ),
-        child: _selectedIndex == 0
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator(color: Colors.red))
+            : _errorMessage.isNotEmpty
+            ? Center(
+          child: Text(
+            _errorMessage,
+            style: GoogleFonts.rajdhani(color: Colors.white),
+          ),
+        )
+            : _selectedIndex == 0
             ? VideoListScreen(
           videos: _crimeVideos,
           isAuthority: widget.isAuthority,
@@ -155,7 +173,7 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
             : _selectedIndex == 1
             ? const ReportedCrimesScreen()
             : AnalyticsScreen(
-          videos: widget.initialCrimeVideos,
+          videos: _crimeVideos,
           isAuthority: widget.isAuthority,
         ),
       ),

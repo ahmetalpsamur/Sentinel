@@ -41,6 +41,10 @@ dependencies:
   animated_text_kit: ^4.2.2
   iconsax_flutter: ^1.0.0
   glassmorphism_ui: ^0.2.0
+  media_kit: ^1.1.1
+  media_kit_video: ^1.2.2
+  media_kit_libs_windows_video: ^1.0.11 # For Windows
+  media_kit_libs_android_video: ^1.2.0
 
 
 
