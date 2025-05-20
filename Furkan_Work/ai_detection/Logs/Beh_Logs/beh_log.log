@@ -1,0 +1,213 @@
+2025-05-20 14:40:03,302 — INFO — 🔄 Connecting to Kafka broker: kafka:9092
+2025-05-20 14:40:03,473 — INFO — ✅ Connected. Listening on topic: segment_videos
+2025-05-20 14:40:10,414 — INFO — 📥 Message received: {'segment_id': '0b6fa587-0036-441d-93be-f06ad9d98530', 'path': 'data/segment_videos/2974b8a0-2b31-4f31-bc4c-9cfd811c552e/0b6fa587-0036-441d-93be-f06ad9d98530.mp4'}
+2025-05-20 14:40:10,417 — INFO — 📂 Found file. Beginning classification for video_id=0b6fa587-0036-441d-93be-f06ad9d98530
+2025-05-20 14:40:14,102 — INFO — ✅ Classification success for 0b6fa587-0036-441d-93be-f06ad9d98530. Saving top prediction.
+2025-05-20 14:40:14,103 — INFO —    Abuse/Normal: 7.47%
+2025-05-20 14:40:14,104 — INFO —    Arrest: 9.23%
+2025-05-20 14:40:14,104 — INFO —    Arson: 4.87%
+2025-05-20 14:40:14,105 — INFO —    Assault: 5.30%
+2025-05-20 14:40:14,105 — INFO —    Burglary: 0.50%
+2025-05-20 14:40:14,105 — INFO —    Explosion: 3.30%
+2025-05-20 14:40:14,105 — INFO —    Fighting: 5.46%
+2025-05-20 14:40:14,105 — INFO —    Normal Videos: 1.18%
+2025-05-20 14:40:14,106 — INFO —    Road Accidents: 10.89%
+2025-05-20 14:40:14,106 — INFO —    Robbery: 4.12%
+2025-05-20 14:40:14,106 — INFO —    Shooting: 0.84%
+2025-05-20 14:40:14,106 — INFO —    Shoplifting: 2.98%
+2025-05-20 14:40:14,107 — INFO —    Stealing: 0.66%
+2025-05-20 14:40:14,107 — INFO —    Vandalism: 43.20%
+2025-05-20 14:40:15,199 — INFO — 📥 Message received: {'segment_id': 'b874652b-1222-438f-9a9b-399dac229a05', 'path': 'data/segment_videos/2974b8a0-2b31-4f31-bc4c-9cfd811c552e/b874652b-1222-438f-9a9b-399dac229a05.mp4'}
+2025-05-20 14:40:15,201 — INFO — 📂 Found file. Beginning classification for video_id=b874652b-1222-438f-9a9b-399dac229a05
+2025-05-20 14:40:16,804 — INFO — ✅ Classification success for b874652b-1222-438f-9a9b-399dac229a05. Saving top prediction.
+2025-05-20 14:40:16,804 — INFO —    Abuse/Normal: 5.90%
+2025-05-20 14:40:16,804 — INFO —    Arrest: 15.75%
+2025-05-20 14:40:16,804 — INFO —    Arson: 1.92%
+2025-05-20 14:40:16,805 — INFO —    Assault: 3.13%
+2025-05-20 14:40:16,805 — INFO —    Burglary: 2.42%
+2025-05-20 14:40:16,805 — INFO —    Explosion: 9.96%
+2025-05-20 14:40:16,806 — INFO —    Fighting: 1.04%
+2025-05-20 14:40:16,806 — INFO —    Normal Videos: 1.95%
+2025-05-20 14:40:16,806 — INFO —    Road Accidents: 40.62%
+2025-05-20 14:40:16,806 — INFO —    Robbery: 4.55%
+2025-05-20 14:40:16,806 — INFO —    Shooting: 2.61%
+2025-05-20 14:40:16,807 — INFO —    Shoplifting: 2.10%
+2025-05-20 14:40:16,807 — INFO —    Stealing: 0.31%
+2025-05-20 14:40:16,808 — INFO —    Vandalism: 7.72%
+2025-05-20 14:40:22,757 — INFO — 📥 Message received: {'segment_id': 'eb7cb383-3e7c-433e-8445-bc480677ed31', 'path': 'data/segment_videos/2974b8a0-2b31-4f31-bc4c-9cfd811c552e/eb7cb383-3e7c-433e-8445-bc480677ed31.mp4'}
+2025-05-20 14:40:22,759 — INFO — 📂 Found file. Beginning classification for video_id=eb7cb383-3e7c-433e-8445-bc480677ed31
+2025-05-20 14:40:24,465 — INFO — ✅ Classification success for eb7cb383-3e7c-433e-8445-bc480677ed31. Saving top prediction.
+2025-05-20 14:40:24,466 — INFO —    Abuse/Normal: 3.93%
+2025-05-20 14:40:24,466 — INFO —    Arrest: 1.77%
+2025-05-20 14:40:24,466 — INFO —    Arson: 3.71%
+2025-05-20 14:40:24,467 — INFO —    Assault: 4.52%
+2025-05-20 14:40:24,467 — INFO —    Burglary: 0.67%
+2025-05-20 14:40:24,467 — INFO —    Explosion: 4.52%
+2025-05-20 14:40:24,467 — INFO —    Fighting: 32.43%
+2025-05-20 14:40:24,467 — INFO —    Normal Videos: 1.33%
+2025-05-20 14:40:24,467 — INFO —    Road Accidents: 1.74%
+2025-05-20 14:40:24,468 — INFO —    Robbery: 4.03%
+2025-05-20 14:40:24,468 — INFO —    Shooting: 0.49%
+2025-05-20 14:40:24,468 — INFO —    Shoplifting: 0.46%
+2025-05-20 14:40:24,468 — INFO —    Stealing: 1.42%
+2025-05-20 14:40:24,468 — INFO —    Vandalism: 38.98%
+2025-05-20 15:12:05,634 — INFO — 🔄 Connecting to Kafka broker: kafka:9092
+2025-05-20 15:12:05,774 — INFO — ✅ Connected. Listening on topic: segment_videos
+2025-05-20 15:13:18,062 — INFO — 📥 Message received: {'segment_id': 'd1f35d6f-2d6c-4335-b498-e00440376c4e', 'path': 'data/segment_videos/722372a0-f064-4144-ae45-1e8067c3c67b/d1f35d6f-2d6c-4335-b498-e00440376c4e.mp4'}
+2025-05-20 15:13:18,065 — INFO — 📂 Found file. Beginning classification for video_id=d1f35d6f-2d6c-4335-b498-e00440376c4e
+2025-05-20 15:13:22,067 — INFO — ✅ Classification success for d1f35d6f-2d6c-4335-b498-e00440376c4e. Saving top prediction.
+2025-05-20 15:13:22,067 — INFO —    Abuse/Normal: 7.45%
+2025-05-20 15:13:22,067 — INFO —    Arrest: 9.25%
+2025-05-20 15:13:22,067 — INFO —    Arson: 4.88%
+2025-05-20 15:13:22,068 — INFO —    Assault: 5.31%
+2025-05-20 15:13:22,068 — INFO —    Burglary: 0.50%
+2025-05-20 15:13:22,068 — INFO —    Explosion: 3.31%
+2025-05-20 15:13:22,068 — INFO —    Fighting: 5.47%
+2025-05-20 15:13:22,069 — INFO —    Normal Videos: 1.18%
+2025-05-20 15:13:22,069 — INFO —    Road Accidents: 10.88%
+2025-05-20 15:13:22,069 — INFO —    Robbery: 4.12%
+2025-05-20 15:13:22,069 — INFO —    Shooting: 0.84%
+2025-05-20 15:13:22,069 — INFO —    Shoplifting: 2.98%
+2025-05-20 15:13:22,069 — INFO —    Stealing: 0.66%
+2025-05-20 15:13:22,070 — INFO —    Vandalism: 43.18%
+2025-05-20 15:13:22,097 — INFO — 📥 Message received: {'segment_id': 'fcbb80d8-c88a-414e-bf05-3d838d1b3b9c', 'path': 'data/segment_videos/722372a0-f064-4144-ae45-1e8067c3c67b/fcbb80d8-c88a-414e-bf05-3d838d1b3b9c.mp4'}
+2025-05-20 15:13:22,098 — INFO — 📂 Found file. Beginning classification for video_id=fcbb80d8-c88a-414e-bf05-3d838d1b3b9c
+2025-05-20 15:13:23,131 — INFO — ✅ Classification success for fcbb80d8-c88a-414e-bf05-3d838d1b3b9c. Saving top prediction.
+2025-05-20 15:13:23,131 — INFO —    Abuse/Normal: 5.90%
+2025-05-20 15:13:23,131 — INFO —    Arrest: 15.75%
+2025-05-20 15:13:23,132 — INFO —    Arson: 1.92%
+2025-05-20 15:13:23,132 — INFO —    Assault: 3.13%
+2025-05-20 15:13:23,132 — INFO —    Burglary: 2.42%
+2025-05-20 15:13:23,132 — INFO —    Explosion: 9.96%
+2025-05-20 15:13:23,132 — INFO —    Fighting: 1.04%
+2025-05-20 15:13:23,133 — INFO —    Normal Videos: 1.95%
+2025-05-20 15:13:23,133 — INFO —    Road Accidents: 40.62%
+2025-05-20 15:13:23,133 — INFO —    Robbery: 4.55%
+2025-05-20 15:13:23,133 — INFO —    Shooting: 2.61%
+2025-05-20 15:13:23,133 — INFO —    Shoplifting: 2.10%
+2025-05-20 15:13:23,134 — INFO —    Stealing: 0.31%
+2025-05-20 15:13:23,134 — INFO —    Vandalism: 7.72%
+2025-05-20 15:13:29,561 — INFO — 📥 Message received: {'segment_id': '8929bf22-2b58-4030-b1d9-71b64ac81d4f', 'path': 'data/segment_videos/722372a0-f064-4144-ae45-1e8067c3c67b/8929bf22-2b58-4030-b1d9-71b64ac81d4f.mp4'}
+2025-05-20 15:13:29,563 — INFO — 📂 Found file. Beginning classification for video_id=8929bf22-2b58-4030-b1d9-71b64ac81d4f
+2025-05-20 15:13:32,042 — INFO — ✅ Classification success for 8929bf22-2b58-4030-b1d9-71b64ac81d4f. Saving top prediction.
+2025-05-20 15:13:32,042 — INFO —    Abuse/Normal: 3.93%
+2025-05-20 15:13:32,043 — INFO —    Arrest: 1.77%
+2025-05-20 15:13:32,043 — INFO —    Arson: 3.71%
+2025-05-20 15:13:32,043 — INFO —    Assault: 4.52%
+2025-05-20 15:13:32,044 — INFO —    Burglary: 0.67%
+2025-05-20 15:13:32,044 — INFO —    Explosion: 4.52%
+2025-05-20 15:13:32,044 — INFO —    Fighting: 32.43%
+2025-05-20 15:13:32,044 — INFO —    Normal Videos: 1.33%
+2025-05-20 15:13:32,045 — INFO —    Road Accidents: 1.74%
+2025-05-20 15:13:32,045 — INFO —    Robbery: 4.03%
+2025-05-20 15:13:32,045 — INFO —    Shooting: 0.49%
+2025-05-20 15:13:32,045 — INFO —    Shoplifting: 0.46%
+2025-05-20 15:13:32,045 — INFO —    Stealing: 1.42%
+2025-05-20 15:13:32,046 — INFO —    Vandalism: 38.98%
+2025-05-20 15:13:46,908 — INFO — 📥 Message received: {'segment_id': 'd4e9cbca-27dc-48d8-8fa1-04931164928d', 'path': 'data/segment_videos/c3695ac1-d769-463e-ab28-38b75b43bc5c/d4e9cbca-27dc-48d8-8fa1-04931164928d.mp4'}
+2025-05-20 15:13:46,910 — INFO — 📂 Found file. Beginning classification for video_id=d4e9cbca-27dc-48d8-8fa1-04931164928d
+2025-05-20 15:13:49,453 — INFO — ✅ Classification success for d4e9cbca-27dc-48d8-8fa1-04931164928d. Saving top prediction.
+2025-05-20 15:13:49,453 — INFO —    Abuse/Normal: 7.47%
+2025-05-20 15:13:49,453 — INFO —    Arrest: 9.23%
+2025-05-20 15:13:49,453 — INFO —    Arson: 4.87%
+2025-05-20 15:13:49,454 — INFO —    Assault: 5.30%
+2025-05-20 15:13:49,454 — INFO —    Burglary: 0.50%
+2025-05-20 15:13:49,454 — INFO —    Explosion: 3.30%
+2025-05-20 15:13:49,454 — INFO —    Fighting: 5.46%
+2025-05-20 15:13:49,454 — INFO —    Normal Videos: 1.18%
+2025-05-20 15:13:49,455 — INFO —    Road Accidents: 10.89%
+2025-05-20 15:13:49,455 — INFO —    Robbery: 4.12%
+2025-05-20 15:13:49,455 — INFO —    Shooting: 0.84%
+2025-05-20 15:13:49,455 — INFO —    Shoplifting: 2.98%
+2025-05-20 15:13:49,455 — INFO —    Stealing: 0.66%
+2025-05-20 15:13:49,456 — INFO —    Vandalism: 43.20%
+2025-05-20 15:13:49,873 — INFO — 📥 Message received: {'segment_id': 'e286d262-f59a-452d-adf6-44384a58a20f', 'path': 'data/segment_videos/c3695ac1-d769-463e-ab28-38b75b43bc5c/e286d262-f59a-452d-adf6-44384a58a20f.mp4'}
+2025-05-20 15:13:49,875 — INFO — 📂 Found file. Beginning classification for video_id=e286d262-f59a-452d-adf6-44384a58a20f
+2025-05-20 15:13:50,832 — INFO — ✅ Classification success for e286d262-f59a-452d-adf6-44384a58a20f. Saving top prediction.
+2025-05-20 15:13:50,832 — INFO —    Abuse/Normal: 5.90%
+2025-05-20 15:13:50,833 — INFO —    Arrest: 15.75%
+2025-05-20 15:13:50,833 — INFO —    Arson: 1.92%
+2025-05-20 15:13:50,833 — INFO —    Assault: 3.13%
+2025-05-20 15:13:50,833 — INFO —    Burglary: 2.42%
+2025-05-20 15:13:50,833 — INFO —    Explosion: 9.96%
+2025-05-20 15:13:50,834 — INFO —    Fighting: 1.04%
+2025-05-20 15:13:50,834 — INFO —    Normal Videos: 1.95%
+2025-05-20 15:13:50,834 — INFO —    Road Accidents: 40.62%
+2025-05-20 15:13:50,834 — INFO —    Robbery: 4.55%
+2025-05-20 15:13:50,834 — INFO —    Shooting: 2.61%
+2025-05-20 15:13:50,834 — INFO —    Shoplifting: 2.10%
+2025-05-20 15:13:50,835 — INFO —    Stealing: 0.31%
+2025-05-20 15:13:50,835 — INFO —    Vandalism: 7.72%
+2025-05-20 15:13:56,877 — INFO — 📥 Message received: {'segment_id': 'bd7256de-66a4-41c5-95f7-87e69372f0de', 'path': 'data/segment_videos/c3695ac1-d769-463e-ab28-38b75b43bc5c/bd7256de-66a4-41c5-95f7-87e69372f0de.mp4'}
+2025-05-20 15:13:56,878 — INFO — 📂 Found file. Beginning classification for video_id=bd7256de-66a4-41c5-95f7-87e69372f0de
+2025-05-20 15:13:58,646 — INFO — ✅ Classification success for bd7256de-66a4-41c5-95f7-87e69372f0de. Saving top prediction.
+2025-05-20 15:13:58,647 — INFO —    Abuse/Normal: 3.93%
+2025-05-20 15:13:58,647 — INFO —    Arrest: 1.77%
+2025-05-20 15:13:58,647 — INFO —    Arson: 3.71%
+2025-05-20 15:13:58,647 — INFO —    Assault: 4.52%
+2025-05-20 15:13:58,647 — INFO —    Burglary: 0.67%
+2025-05-20 15:13:58,648 — INFO —    Explosion: 4.52%
+2025-05-20 15:13:58,648 — INFO —    Fighting: 32.43%
+2025-05-20 15:13:58,648 — INFO —    Normal Videos: 1.33%
+2025-05-20 15:13:58,648 — INFO —    Road Accidents: 1.74%
+2025-05-20 15:13:58,648 — INFO —    Robbery: 4.03%
+2025-05-20 15:13:58,648 — INFO —    Shooting: 0.49%
+2025-05-20 15:13:58,649 — INFO —    Shoplifting: 0.46%
+2025-05-20 15:13:58,649 — INFO —    Stealing: 1.42%
+2025-05-20 15:13:58,649 — INFO —    Vandalism: 38.98%
+2025-05-20 15:41:15,113 — INFO — 🔄 Connecting to Kafka broker: kafka:9092
+2025-05-20 15:41:31,004 — INFO — 🔄 Connecting to Kafka broker: kafka:9092
+2025-05-20 15:41:45,389 — INFO — 🔄 Connecting to Kafka broker: kafka:9092
+2025-05-20 15:45:31,366 — INFO — 🔄 Connecting to Kafka broker: kafka:9092
+2025-05-20 15:45:31,473 — INFO — ✅ Connected. Listening on topic: segment_videos
+2025-05-20 15:48:15,101 — INFO — 📥 Message received: {'segment_id': 'a5c54040-7a56-46d4-8429-895ff4940b82', 'path': 'data/segment_videos/9784b0c8-eb80-4a7e-b3d9-3a98ecc2b8fe/a5c54040-7a56-46d4-8429-895ff4940b82.mp4'}
+2025-05-20 15:48:15,112 — INFO — 📂 Found file. Beginning classification for video_id=a5c54040-7a56-46d4-8429-895ff4940b82
+2025-05-20 15:48:19,958 — INFO — ✅ Classification success for a5c54040-7a56-46d4-8429-895ff4940b82. Saving top prediction.
+2025-05-20 15:48:19,958 — INFO —    Abuse/Normal: 7.45%
+2025-05-20 15:48:19,958 — INFO —    Arrest: 9.26%
+2025-05-20 15:48:19,959 — INFO —    Arson: 4.87%
+2025-05-20 15:48:19,959 — INFO —    Assault: 5.27%
+2025-05-20 15:48:19,959 — INFO —    Burglary: 0.50%
+2025-05-20 15:48:19,959 — INFO —    Explosion: 3.30%
+2025-05-20 15:48:19,959 — INFO —    Fighting: 5.49%
+2025-05-20 15:48:19,959 — INFO —    Normal Videos: 1.18%
+2025-05-20 15:48:19,959 — INFO —    Road Accidents: 10.86%
+2025-05-20 15:48:19,960 — INFO —    Robbery: 4.12%
+2025-05-20 15:48:19,960 — INFO —    Shooting: 0.84%
+2025-05-20 15:48:19,960 — INFO —    Shoplifting: 2.96%
+2025-05-20 15:48:19,960 — INFO —    Stealing: 0.66%
+2025-05-20 15:48:19,960 — INFO —    Vandalism: 43.23%
+2025-05-20 15:48:19,995 — INFO — 📥 Message received: {'segment_id': '19229919-c184-4f8a-87c1-20f9ab662958', 'path': 'data/segment_videos/9784b0c8-eb80-4a7e-b3d9-3a98ecc2b8fe/19229919-c184-4f8a-87c1-20f9ab662958.mp4'}
+2025-05-20 15:48:19,996 — INFO — 📂 Found file. Beginning classification for video_id=19229919-c184-4f8a-87c1-20f9ab662958
+2025-05-20 15:48:21,040 — INFO — ✅ Classification success for 19229919-c184-4f8a-87c1-20f9ab662958. Saving top prediction.
+2025-05-20 15:48:21,040 — INFO —    Abuse/Normal: 5.90%
+2025-05-20 15:48:21,041 — INFO —    Arrest: 15.75%
+2025-05-20 15:48:21,041 — INFO —    Arson: 1.92%
+2025-05-20 15:48:21,041 — INFO —    Assault: 3.13%
+2025-05-20 15:48:21,041 — INFO —    Burglary: 2.42%
+2025-05-20 15:48:21,041 — INFO —    Explosion: 9.96%
+2025-05-20 15:48:21,042 — INFO —    Fighting: 1.04%
+2025-05-20 15:48:21,042 — INFO —    Normal Videos: 1.95%
+2025-05-20 15:48:21,042 — INFO —    Road Accidents: 40.62%
+2025-05-20 15:48:21,042 — INFO —    Robbery: 4.55%
+2025-05-20 15:48:21,042 — INFO —    Shooting: 2.61%
+2025-05-20 15:48:21,042 — INFO —    Shoplifting: 2.10%
+2025-05-20 15:48:21,043 — INFO —    Stealing: 0.31%
+2025-05-20 15:48:21,043 — INFO —    Vandalism: 7.72%
+2025-05-20 15:48:25,276 — INFO — 📥 Message received: {'segment_id': '52601a9b-39cc-4556-912a-af34deca7348', 'path': 'data/segment_videos/9784b0c8-eb80-4a7e-b3d9-3a98ecc2b8fe/52601a9b-39cc-4556-912a-af34deca7348.mp4'}
+2025-05-20 15:48:25,278 — INFO — 📂 Found file. Beginning classification for video_id=52601a9b-39cc-4556-912a-af34deca7348
+2025-05-20 15:48:27,048 — INFO — ✅ Classification success for 52601a9b-39cc-4556-912a-af34deca7348. Saving top prediction.
+2025-05-20 15:48:27,049 — INFO —    Abuse/Normal: 3.93%
+2025-05-20 15:48:27,049 — INFO —    Arrest: 1.77%
+2025-05-20 15:48:27,049 — INFO —    Arson: 3.71%
+2025-05-20 15:48:27,049 — INFO —    Assault: 4.52%
+2025-05-20 15:48:27,049 — INFO —    Burglary: 0.67%
+2025-05-20 15:48:27,049 — INFO —    Explosion: 4.52%
+2025-05-20 15:48:27,049 — INFO —    Fighting: 32.43%
+2025-05-20 15:48:27,050 — INFO —    Normal Videos: 1.33%
+2025-05-20 15:48:27,050 — INFO —    Road Accidents: 1.74%
+2025-05-20 15:48:27,050 — INFO —    Robbery: 4.03%
+2025-05-20 15:48:27,050 — INFO —    Shooting: 0.49%
+2025-05-20 15:48:27,050 — INFO —    Shoplifting: 0.46%
+2025-05-20 15:48:27,051 — INFO —    Stealing: 1.42%
+2025-05-20 15:48:27,051 — INFO —    Vandalism: 38.98%

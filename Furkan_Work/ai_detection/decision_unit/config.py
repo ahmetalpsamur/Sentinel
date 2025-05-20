@@ -33,5 +33,5 @@ class Config:
     INPUT_TOPIC = "ai_results"
     OUTPUT_TOPUC = "segment_videos"
     KAFKA_BOOTSTRAP = os.getenv("KAFKA_BOOTSTRAP", "kafka:9092")
-    BACKEND_HOST = "backend"
+    BACKEND_HOST = "192.168.1.75"
     BACKEND_PORT = 8000

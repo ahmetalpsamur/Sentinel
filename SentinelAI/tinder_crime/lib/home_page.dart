@@ -32,9 +32,11 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
 
   Future<void> _fetchCrimeVideos() async {
     try {
-      final response = await http.get(
-        Uri.parse('http://192.168.1.77/deepseek_json_20250519_2bf957.json'),
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .get(
+            Uri.parse('http://192.168.1.75:8000/segments/'),
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
@@ -47,14 +49,15 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
               title: videoJson['title'] ?? 'No Title',
               description: videoJson['description'] ?? 'No Description',
               videoUrl: videoJson['videoUrl'] ?? '',
-              crimeProbability: (videoJson['crimeProbability'] ?? 0.0).toDouble(),
-              weaponProbability: (videoJson['weaponProbability'] ?? 0.0).toDouble(),
-              weaponType: videoJson['weaponType'],
+              crimeProbability:
+                  (videoJson['crimeProbability'] ?? 0.0).toDouble(),
+              weaponProbability:
+                  (videoJson['weaponProbability'] ?? 0.0).toDouble(),
+              weaponType: videoJson['weaponType'] ?? 'Unknown',
               location: LatLng(
-                (videoJson['latitude'] ?? 0.0).toDouble(),
-                (videoJson['longitude'] ?? 0.0).toDouble(),
-              ),
-              timestamp: DateTime.parse(videoJson['timestamp'] ?? DateTime.now().toString()),
+                  0.0, 0.0), // Eğer koordinatlar gelirse burada değiştirirsin
+              timestamp: DateTime.parse(
+                  videoJson['timestamp'] ?? DateTime.now().toString()),
               crimeType: videoJson['crimeType'] ?? 'Unknown',
             );
           }).toList();
@@ -69,7 +72,6 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
         _errorMessage = 'Error loading videos: ${e.toString()}';
       });
 
-      // Fallback to static data if API fails
       _loadFallbackData();
     }
   }
@@ -81,7 +83,8 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
           id: '1',
           title: 'Suspicious Activity in Parking Lot',
           description: 'Possible car break-in detected at 3:15 AM',
-          videoUrl: 'https://storage.googleapis.com/shieldir_videos/berkayTest.mp4',
+          videoUrl:
+              'https://storage.googleapis.com/shieldir_videos/berkayTest.mp4',
           crimeProbability: 0.10,
           weaponProbability: 0.10,
           weaponType: "Gun",
@@ -158,24 +161,24 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
         child: _isLoading
             ? const Center(child: CircularProgressIndicator(color: Colors.red))
             : _errorMessage.isNotEmpty
-            ? Center(
-          child: Text(
-            _errorMessage,
-            style: GoogleFonts.rajdhani(color: Colors.white),
-          ),
-        )
-            : _selectedIndex == 0
-            ? VideoListScreen(
-          videos: _crimeVideos,
-          isAuthority: widget.isAuthority,
-          onCrimeReported: _removeReportedCrime,
-        )
-            : _selectedIndex == 1
-            ? const ReportedCrimesScreen()
-            : AnalyticsScreen(
-          videos: _crimeVideos,
-          isAuthority: widget.isAuthority,
-        ),
+                ? Center(
+                    child: Text(
+                      _errorMessage,
+                      style: GoogleFonts.rajdhani(color: Colors.white),
+                    ),
+                  )
+                : _selectedIndex == 0
+                    ? VideoListScreen(
+                        videos: _crimeVideos,
+                        isAuthority: widget.isAuthority,
+                        onCrimeReported: _removeReportedCrime,
+                      )
+                    : _selectedIndex == 1
+                        ? const ReportedCrimesScreen()
+                        : AnalyticsScreen(
+                            videos: _crimeVideos,
+                            isAuthority: widget.isAuthority,
+                          ),
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
@@ -203,14 +206,16 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
               BottomNavigationBarItem(
                 icon: Icon(
                   _selectedIndex == 0 ? Iconsax.video : Iconsax.video,
-                  color: _selectedIndex == 0 ? Colors.red[700] : Colors.grey[500],
+                  color:
+                      _selectedIndex == 0 ? Colors.red[700] : Colors.grey[500],
                 ),
                 label: 'Videos',
               ),
               BottomNavigationBarItem(
                 icon: Icon(
                   _selectedIndex == 1 ? Iconsax.warning_2 : Iconsax.warning_2,
-                  color: _selectedIndex == 1 ? Colors.red[700] : Colors.grey[500],
+                  color:
+                      _selectedIndex == 1 ? Colors.red[700] : Colors.grey[500],
                 ),
                 label: 'Reports',
               ),
@@ -218,7 +223,9 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
                 BottomNavigationBarItem(
                   icon: Icon(
                     _selectedIndex == 2 ? Iconsax.chart : Iconsax.chart_2,
-                    color: _selectedIndex == 2 ? Colors.red[700] : Colors.grey[500],
+                    color: _selectedIndex == 2
+                        ? Colors.red[700]
+                        : Colors.grey[500],
                   ),
                   label: 'Analytics',
                 ),

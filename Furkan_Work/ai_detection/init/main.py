@@ -87,8 +87,9 @@ def create_tables():
         crime_score REAL,        
         crime_type TEXT,
         weapon_type TEXT,  
+        reported BOOLEAN DEFAULT FALSE,
         timestamp TEXT DEFAULT CURRENT_TIMESTAMP   
-        )
+    )
     """)
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS video_predictions (
