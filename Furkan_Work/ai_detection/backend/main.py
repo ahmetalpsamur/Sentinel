@@ -7,8 +7,18 @@ import aiosqlite
 from fastapi.responses import HTMLResponse,StreamingResponse  
 from fastapi import APIRouter
 from pathlib import Path
+from fastapi.middleware.cors import CORSMiddleware
+
+
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 logger = setup_logger()
 
 DATA_DIR = os.path.join(os.getcwd(), "data", "uploaded_videos")
