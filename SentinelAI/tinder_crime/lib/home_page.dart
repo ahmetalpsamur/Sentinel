@@ -34,7 +34,8 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
     try {
       final response = await http
           .get(
-            Uri.parse('http://192.168.1.75:8000/segments/'),
+            //Uri.parse('http://192.168.1.75:8000/segments/'),
+           Uri.parse('http://localhost/furkanData.json')
           )
           .timeout(const Duration(seconds: 10));
 
@@ -161,25 +162,31 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
         child: _isLoading
             ? const Center(child: CircularProgressIndicator(color: Colors.red))
             : _errorMessage.isNotEmpty
-                ? Center(
-                    child: Text(
-                      _errorMessage,
-                      style: GoogleFonts.rajdhani(color: Colors.white),
-                    ),
-                  )
-                : _selectedIndex == 0
-                    ? VideoListScreen(
-                        videos: _crimeVideos,
-                        isAuthority: widget.isAuthority,
-                        onCrimeReported: _removeReportedCrime,
-                      )
-                    : _selectedIndex == 1
-                        ? const ReportedCrimesScreen()
-                        : AnalyticsScreen(
-                            videos: _crimeVideos,
-                            isAuthority: widget.isAuthority,
-                          ),
+            ? Center(
+          child: Text(
+            _errorMessage,
+            style: GoogleFonts.rajdhani(color: Colors.white),
+          ),
+        )
+            : RefreshIndicator(
+          color: Colors.red[700],
+          backgroundColor: Colors.grey[900],
+          onRefresh: _fetchCrimeVideos, // 👈 Veriyi yeniden çeker
+          child: _selectedIndex == 0
+              ? VideoListScreen(
+            videos: _crimeVideos,
+            isAuthority: widget.isAuthority,
+            onCrimeReported: _removeReportedCrime,
+          )
+              : _selectedIndex == 1
+              ? const ReportedCrimesScreen()
+              : AnalyticsScreen(
+            videos: _crimeVideos,
+            isAuthority: widget.isAuthority,
+          ),
+        ),
       ),
+
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.grey[850],

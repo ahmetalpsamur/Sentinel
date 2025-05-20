@@ -22,38 +22,50 @@ class VideoCard extends StatefulWidget {
   State<VideoCard> createState() => _VideoCardState();
 }
 
-class _VideoCardState extends State<VideoCard> {
+class _VideoCardState extends State<VideoCard> with WidgetsBindingObserver {
   late final Player _player;
   late final VideoController _videoController;
   bool _isInitialized = false;
   bool _isPlaying = false;
   bool _hasError = false;
+  bool _isDisposed = false;
 
   @override
   void initState() {
     super.initState();
-    // Initialize media_kit
-    MediaKit.ensureInitialized();
-
-    _player = Player();
-    _videoController = VideoController(_player);
-
-    // Setup error handling
-    _player.stream.error.listen((error) {
-      if (mounted) {
-        setState(() {
-          _hasError = true;
-        });
-      }
-    });
-
-    // Setup player initialization
+    WidgetsBinding.instance.addObserver(this);
     _initializePlayer();
   }
 
   Future<void> _initializePlayer() async {
     try {
-      await _player.open(Media(widget.video.videoUrl));
+      MediaKit.ensureInitialized();
+      _player = Player();
+      _videoController = VideoController(_player);
+
+      // Setup error handling
+      _player.stream.error.listen((error) {
+        if (_isDisposed) return;
+        if (mounted) {
+          setState(() {
+            _hasError = true;
+          });
+        }
+      });
+
+      // Setup playing state listener
+      _player.stream.playing.listen((playing) {
+        if (_isDisposed) return;
+        if (mounted) {
+          setState(() {
+            _isPlaying = playing;
+          });
+        }
+      });
+
+      // Open media but don't auto-play
+      await _player.open(Media(widget.video.videoUrl), play: false);
+
       if (mounted) {
         setState(() {
           _isInitialized = true;
@@ -68,21 +80,33 @@ class _VideoCardState extends State<VideoCard> {
     }
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      // Uygulama arka plana geçtiğinde videoyu durdur
+      _player.pause();
+    } else if (state == AppLifecycleState.resumed) {
+      // Uygulama tekrar açıldığında kontrolleri güncelle
+      if (mounted) {
+        setState(() {
+          _isPlaying = _player.state.playing;
+        });
+      }
+    }
+  }
+
   void _togglePlayPause() {
-    if (_player.state.playing) {
+    if (_isPlaying) {
       _player.pause();
     } else {
       _player.play();
-    }
-    if (mounted) {
-      setState(() {
-        _isPlaying = _player.state.playing;
-      });
     }
   }
 
   @override
   void dispose() {
+    _isDisposed = true;
+    WidgetsBinding.instance.removeObserver(this);
     _player.dispose();
     super.dispose();
   }
@@ -139,7 +163,10 @@ class _VideoCardState extends State<VideoCard> {
                     child: _hasError
                         ? _buildErrorWidget()
                         : _isInitialized
-                        ? Video(controller: _videoController)
+                        ? Video(
+                      controller: _videoController,
+                      controls: null,
+                    )
                         : Container(
                       color: Colors.grey[900],
                       child: Center(
@@ -379,7 +406,12 @@ class _VideoCardState extends State<VideoCard> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red[700],
               ),
-              onPressed: _initializePlayer,
+              onPressed: () {
+                setState(() {
+                  _hasError = false;
+                });
+                _initializePlayer();
+              },
               child: Text(
                 'Retry',
                 style: GoogleFonts.rajdhani(),
@@ -454,7 +486,7 @@ class CrimeProbabilityIndicator extends StatelessWidget {
       if (type == 'weapon' && weaponType != null) {
         return '${weaponType!.toUpperCase()} ${(probability * 100).toStringAsFixed(0)}%';
       }
-      return 'CRIME ${(probability * 100).toStringAsFixed(0)}%';
+      return 'CRIME ${probability.toStringAsFixed(0)}%';
     }
 
     return Container(
