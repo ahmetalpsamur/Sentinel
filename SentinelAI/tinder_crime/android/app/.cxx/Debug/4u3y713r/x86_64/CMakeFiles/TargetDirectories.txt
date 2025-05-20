@@ -1,2 +1,0 @@
-C:/Users/adana/Desktop/Sentinel/SentinelAI/tinder_crime/android/app/.cxx/Debug/4u3y713r/x86_64/CMakeFiles/edit_cache.dir
-C:/Users/adana/Desktop/Sentinel/SentinelAI/tinder_crime/android/app/.cxx/Debug/4u3y713r/x86_64/CMakeFiles/rebuild_cache.dir
