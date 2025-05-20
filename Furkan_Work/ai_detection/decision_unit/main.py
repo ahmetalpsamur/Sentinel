@@ -22,9 +22,8 @@ def kafka_consumer_loop():
             frame_id = data.get("frame_id")
             src_video_id = data.get("src_video_id")
             frame_index = data.get("frame_index")
-            confidence = data.get("confidence", 0)
             is_detected = data.get("is_detected", False)
-            bounding_boxes = data.get("bounding_boxes", [])  
+            detections=data.get("detections",[])
 
             if src_video_id is None or frame_index is None:
                 logger.warning(f"Geçersiz veri: {data}")
@@ -33,11 +32,10 @@ def kafka_consumer_loop():
             frame_buffer.add_frame(
                 src_video_id=src_video_id,
                 frame_index=frame_index,
-                confidence=confidence,
-                is_detected=is_detected,
                 frame_id=frame_id,
-                bounding_boxes=bounding_boxes )
-
+                is_detected=is_detected,
+                detections=detections
+            )
 
 
             logger.debug(f"🧩 Frame {frame_index} added for video {src_video_id}")
@@ -54,7 +52,12 @@ def buffer_watcher_loop():
                 logger.info(f"📦 Video buffer timed out: {video_id}")
                 frames = frame_buffer.pop_video_frames(video_id)
                 if frames:
-                    build_segment_for_video(video_id, frames)
+                    build_segment_for_video(
+                        video_id=video_id,
+                        frames=frames,
+                        window_size=Config.SEGMENT_WINDOW_SIZE,
+                        min_detections=Config.SEGMENT_MIN_DETECTIONS
+                    )
         except Exception as e:
             logger.error(f"Buffer watcher error: {e}")
 

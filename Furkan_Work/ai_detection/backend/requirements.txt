@@ -2,3 +2,4 @@ fastapi
 uvicorn
 kafka-python
 python-multipart
+aiosqlite

@@ -7,8 +7,10 @@ import os
 
 TOPICS = {
     "video_uploaded": 1,
+    "uploaded_video_beh": 1,
     "to_ai_unit": 4,
-    "ai_results": 1
+    "ai_results": 1,
+    "segment_videos":1,
 }
 
 def create_topics():
@@ -73,11 +75,35 @@ def create_tables():
         bounding_boxes TEXT,
         output_path TEXT,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-
         FOREIGN KEY(video_id) REFERENCES video_metadata(video_id)
     )
     """)
-
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS segment(
+        segment_id TEXT PRIMARY KEY,
+        url TEXT,
+        description TEXT,
+        weapon_score REAL,
+        crime_score REAL,        
+        crime_type TEXT,
+        weapon_type TEXT,  
+        timestamp TEXT DEFAULT CURRENT_TIMESTAMP   
+        )
+    """)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS video_predictions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        video_id TEXT NOT NULL,
+        video_path TEXT NOT NULL,
+        top1_label TEXT NOT NULL,
+        top1_confidence REAL NOT NULL,
+        top2_label TEXT,
+        top2_confidence REAL,
+        top3_label TEXT,
+        top3_confidence REAL,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
     conn.commit()
     conn.close()
     print("✅ Database initialized at", DB_PATH)

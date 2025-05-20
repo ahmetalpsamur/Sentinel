@@ -1,6 +1,0 @@
-2025-05-11 17:22:28,322 — INFO — ✅ Redis bağlantısı başarılı
-2025-05-11 17:22:28,323 — INFO — 🚀 Decision Unit started
-2025-05-11 17:22:28,332 — INFO — 🎯 Kafka consumer started on topic: ai_results
-2025-05-11 17:35:32,025 — INFO — ✅ Redis bağlantısı başarılı
-2025-05-11 17:35:32,027 — INFO — 🚀 Decision Unit started
-2025-05-11 17:35:32,037 — INFO — 🎯 Kafka consumer started on topic: ai_results

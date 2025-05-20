@@ -6,7 +6,8 @@ from image_processor import ImageProcessor
 from utils.redis_config import get_redis_client
 from utils.logger import setup_logger
 from config import Config
-from TRTModelService import TRTModelService
+from model_service import ModelService
+from collections import Counter
 
 
 def main():
@@ -18,8 +19,8 @@ def main():
         kafka_manager = KafkaManager()
         
         image_processor = ImageProcessor()
-        #model_service = ModelService()
-        model_service = TRTModelService("models/model.engine")
+        model_service = ModelService()
+        #model_service = TRTModelService("models/model.engine")
         redis_client = get_redis_client()
         
         # Kafka bağlantıları
@@ -34,8 +35,8 @@ def main():
                 process_message(msg, image_processor, model_service, redis_client, producer)
             except Exception as e:
                 logger.error(f"Message processing failed: {e}")
-                #if model_service.device.type == 'cuda':
-                #    torch.cuda.empty_cache()
+                if model_service.device.type == 'cuda':
+                    torch.cuda.empty_cache()
 
     
     except KeyboardInterrupt:
@@ -82,29 +83,29 @@ def process_message(msg, image_processor, model_service, redis_client, producer)
 
     # Tahmin yap
     predictions = model_service.predict(frame)
-    
-    if predictions['boxes']:
-        # Sonuçları hazırla
+
+    if predictions:
         result = {
             "frame_id": frame_id,
             "frame_index": frame_index,
             "src_video_id": src_video_id,
-            "confidence": float(max(predictions['confs'])) if predictions['confs'] else 0.0,
             "is_detected": True,
-            "bounding_boxes": predictions['boxes']
+            "detections": predictions  
         }
-        
+
         # Kafka'ya gönder
         producer.send(Config.OUTPUT_TOPIC, result)
         producer.flush()
-        
-        # Görüntüyü kaydet
-        #annotated_image = image_processor.draw_boxes(frame.copy(), predictions['boxes'])
-        #image_processor.save_image(annotated_image, frame_id)
-        
-        logger.info(f"Processed frame {frame_id} with {len(predictions['boxes'])} detections, frame index:{frame_index} , confident: {max(predictions['confs'])}")
+
+        logger.info(f"✅ Processed frame {frame_id} with {len(predictions)} detections — frame index: {frame_index}")
+        for i, pred in enumerate(predictions):
+            logger.info(
+                f"🔎 Detection {i+1} — Box: {pred['box']}, "
+                f"Confidence: {pred['confidence']:.2f}, "
+                f"Type: {pred['weapon_type']}"
+            )
     else:
-        logger.debug(f"No detections in frame {frame_id} and frame index:{frame_index}")
+        logger.debug(f"🟡 No detections in frame {frame_id} — frame index: {frame_index}")
 
 if __name__ == "__main__":
     main()

@@ -31,6 +31,30 @@ def insert_segment(segment):
     conn.commit()
     conn.close()
     print(f"🎬 Segment kaydedildi: {segment['segment_id']}")
+
+
+def segment_for_ui(segment):
+    conn = sqlite3.connect(Config.DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    INSERT OR REPLACE INTO segment 
+    (segment_id, url, description, weapon_score, crime_type, weapon_type, timestamp)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (
+        segment["segment_id"],
+        segment.get("url", ""),
+        segment.get("description", ""),
+        segment.get("weapon_score", 0.0),
+        segment.get("crime_type", ""),
+        segment.get("weapon_type", "unknown"),
+        datetime.now().isoformat()
+    ))
+
+    conn.commit()
+    conn.close()
+    print(f"🎬 Segment kaydedildi: {segment['segment_id']}")
+
 def get_video_resolution(video_id):
     import sqlite3
     conn = sqlite3.connect(Config.DB_PATH)

@@ -12,7 +12,7 @@ class Config:
     REDIS_DB = int(os.getenv("REDIS_DB", 0))
     
     # Model Ayarları
-    MODEL_PATH = os.path.join(os.path.dirname(__file__), "models", "reSizedV1.pt")
+    MODEL_PATH = os.path.join(os.path.dirname(__file__), "models", "model.pt")
     FRAME_SAVE_PATH = "frames"
     
     # Sistem Ayarları

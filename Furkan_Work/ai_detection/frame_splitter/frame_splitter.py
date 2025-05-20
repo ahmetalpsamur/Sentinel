@@ -9,8 +9,7 @@ from kafka_config import create_consumer,create_producer
 from redis_config import get_redis_client
 from filter_pipeline import preprocess_frame
 from logger import setup_logger
-from shared.db_manager import insert_video_metadata
-from kafka import KafkaProducer
+from db_manager import insert_video_metadata
 from time import sleep
 from concurrent.futures import ThreadPoolExecutor
 

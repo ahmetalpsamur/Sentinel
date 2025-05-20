@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   fastapi_backend:
+    container_name: backend
     build: 
       context: ./backend
       dockerfile: Dockerfile
@@ -10,9 +11,6 @@ services:
     volumes:
       - ./data:/app/data
       - ./Logs/Backend_Logs:/app/Backend_Logs
-      - ./shared:/app/shared
-    environment:
-      - PYTHONPATH=/app/shared
     depends_on:
       kafka:
         condition: service_healthy
@@ -31,10 +29,8 @@ services:
     volumes:
       - ./data:/app/data
       - ./Logs/FS_Logs:/app/FS_Logs
-      - ./shared:/app/shared
     environment:
-      - PYTHONPATH=/app/shared
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - KAFKA_BOOTSTRAP=kafka:9092
     depends_on:
       kafka:
         condition: service_healthy
@@ -63,11 +59,9 @@ services:
     volumes:
       - ./Logs/AI_Logs:/app/AI_Logs
       - ./ai_unit/models:/app/models
-      - ./shared:/app/shared
     environment:
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - KAFKA_BOOTSTRAP=kafka:9092
       - REDIS_HOST=redis
-      - PYTHONPATH=/app/shared
       - WORKER_ID=${HOSTNAME}
       - KAFKA_GROUP_ID=ai-unit-group
     env_file:
@@ -90,6 +84,45 @@ services:
         limits:
           cpus: '4'
           memory: 8G
+    healthcheck:
+      test: ["CMD", "python", "-c", "import torch; assert torch.cuda.is_available()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+  beh_unit:
+    image: beh-unit-gpu
+    build:
+      context: ./beh_unit
+      dockerfile: Dockerfile
+      args:
+        - NVIDIA_DRIVER_VERSION=470
+    runtime: nvidia
+    restart: unless-stopped
+    volumes:
+      - ./Logs/Beh_Logs:/app/Beh_Logs
+      - ./data:/app/data
+    environment:
+      - KAFKA_BOOTSTRAP=kafka:9092
+      - DB_PATH=/app/data/videos.db
+      - WORKER_ID=${HOSTNAME}
+    env_file:
+      - .env
+    depends_on:
+      kafka:
+        condition: service_healthy
+      init:
+        condition: service_completed_successfully
+    deploy:
+      replicas: 1
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+        limits:
+          cpus: '2'
+          memory: 4G
     healthcheck:
       test: ["CMD", "python", "-c", "import torch; assert torch.cuda.is_available()"]
       interval: 30s
@@ -176,7 +209,7 @@ services:
     volumes:
       - ./data:/app/data
     environment:
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - KAFKA_BOOTSTRAP=kafka:9092
     restart: "no"
 
   decision_unit:
@@ -189,7 +222,7 @@ services:
         - ./data/segment_videos:/app/data/segment_videos
       environment:
         - PYTHONPATH=/app
-        - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+        - KAFKA_BOOTSTRAP=kafka:9092
         - REDIS_HOST=redis
         - REDIS_PORT=6379
         - REDIS_DB=0

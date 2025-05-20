@@ -3,7 +3,7 @@ from config import Config
 
 class KafkaManager:
     def __init__(self):
-        self.bootstrap_servers = Config.KAFKA_BOOTSTRAP_SERVERS
+        self.bootstrap_servers = Config.KAFKA_BOOTSTRAP
 
     def get_consumer(self, topic):
         return KafkaConsumer(
