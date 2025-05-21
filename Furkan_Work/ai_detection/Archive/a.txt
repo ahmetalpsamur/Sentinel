@@ -1,0 +1,42 @@
+  ai_unit:
+    image: ai-unit-gpu
+    build:
+      context: ./ai_unit
+      dockerfile: Dockerfile
+      args:
+        - NVIDIA_DRIVER_VERSION=470
+    runtime: nvidia
+    restart: unless-stopped
+    volumes:
+      - ./Logs/AI_Logs:/app/AI_Logs
+      - ./ai_unit/models:/app/models
+    environment:
+      - KAFKA_BOOTSTRAP=kafka:9092
+      - REDIS_HOST=redis
+      - WORKER_ID=${HOSTNAME}
+      - KAFKA_GROUP_ID=ai-unit-group
+    env_file:
+      - .env
+    depends_on:
+      kafka:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      init:
+        condition: service_completed_successfully
+    deploy:
+      replicas: 4
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+        limits:
+          cpus: '4'
+          memory: 8G
+    healthcheck:
+      test: ["CMD", "python", "-c", "import torch; assert torch.cuda.is_available()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3

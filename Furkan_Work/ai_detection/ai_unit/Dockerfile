@@ -1,11 +1,11 @@
-# NVIDIA CUDA 11.8 temel imajı
-FROM nvidia/cuda:11.8.0-runtime-ubuntu22.04
+# CUDA 11.4/11.5 ile uyumlu TensorRT 8.3.1 içeren resmi NVIDIA imajı
+FROM nvcr.io/nvidia/tensorrt:23.06-py3
 
-# Sistem bağımlılıkları
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3.10 \
-    python3-pip \
-    python3-dev \
+# Çalışma dizini
+WORKDIR /app
+
+# Sistem bağımlılıkları (OpenCV ve FFmpeg için gerekli)
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     libgl1 \
     libglib2.0-0 \
     libsm6 \
@@ -15,34 +15,24 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Python 3.10'u varsayılan yap
-RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.10 1
-
-# Pip'i güncelle
-RUN python -m pip install --upgrade pip setuptools wheel
-
-# Çalışma dizini
-WORKDIR /app
-
-# Bağımlılıkları yükle (önce PyTorch)
+# Python bağımlılıkları (önce requirements.txt)
 COPY requirements.txt .
-RUN pip install --no-cache-dir \
-    torch==2.0.1+cu118 \
-    torchvision==0.15.2+cu118 \
-    --extra-index-url https://download.pytorch.org/whl/cu118
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Sonra diğer bağımlılıklar
-RUN pip install --no-cache-dir -r requirements.txt ultralytics==8.2.103
+# TensorRT destekli inference için PyCUDA, Polygraphy ve yardımcılar
+RUN pip install --no-cache-dir pycuda polygraphy colored
 
 # Uygulama dosyalarını kopyala
 COPY . .
 
-# Log ve frame dizinleri
+RUN python convert_to_engine.py || true
+# Gerekli klasörler ve izinler
 RUN mkdir -p /app/logs /app/frames && chmod -R a+rw /app/logs /app/frames
 
-# Environment variables
+# Ortam değişkenleri
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app
 ENV NVIDIA_VISIBLE_DEVICES=all
 
+# Giriş noktası
 CMD ["python", "main.py"]

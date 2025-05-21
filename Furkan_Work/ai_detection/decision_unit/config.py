@@ -1,7 +1,7 @@
 import os
 
 class Config:
-    BUFFER_TIMEOUT = int(os.getenv("BUFFER_TIMEOUT", 5)) 
+    BUFFER_TIMEOUT = 2 
     # Segment oluşturma parametreleri
     SEGMENT_WINDOW_SIZE = 30          # Sliding window boyutu (frame cinsinden)
     SEGMENT_MIN_DETECTIONS = 10       # Segment oluşturmak için minimum tespit sayısı
