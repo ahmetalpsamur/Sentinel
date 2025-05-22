@@ -23,6 +23,7 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
   List<CrimeVideo> _crimeVideos = [];
   bool _isLoading = true;
   String _errorMessage = '';
+  Key _refreshKey = UniqueKey(); // 👈 Sayfa yeniden oluşturmak için key
 
   @override
   void initState() {
@@ -31,12 +32,14 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
   }
 
   Future<void> _fetchCrimeVideos() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = '';
+    });
+
     try {
       final response = await http
-          .get(
-            //Uri.parse('http://192.168.1.75:8000/segments/'),
-           Uri.parse('http://localhost/furkanData.json')
-          )
+          .get(Uri.parse('http://localhost/furkanData.json'))
           .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
@@ -51,17 +54,17 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
               description: videoJson['description'] ?? 'No Description',
               videoUrl: videoJson['videoUrl'] ?? '',
               crimeProbability:
-                  (videoJson['crimeProbability'] ?? 0.0).toDouble(),
+              (videoJson['crimeProbability'] ?? 0.0).toDouble(),
               weaponProbability:
-                  (videoJson['weaponProbability'] ?? 0.0).toDouble(),
+              (videoJson['weaponProbability'] ?? 0.0).toDouble(),
               weaponType: videoJson['weaponType'] ?? 'Unknown',
-              location: LatLng(
-                  0.0, 0.0), // Eğer koordinatlar gelirse burada değiştirirsin
+              location: const LatLng(0.0, 0.0),
               timestamp: DateTime.parse(
                   videoJson['timestamp'] ?? DateTime.now().toString()),
               crimeType: videoJson['crimeType'] ?? 'Unknown',
             );
           }).toList();
+          _refreshKey = UniqueKey(); // 👈 Sayfayı komple yenile
           _isLoading = false;
         });
       } else {
@@ -85,7 +88,7 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
           title: 'Suspicious Activity in Parking Lot',
           description: 'Possible car break-in detected at 3:15 AM',
           videoUrl:
-              'https://storage.googleapis.com/shieldir_videos/berkayTest.mp4',
+          'https://storage.googleapis.com/shieldir_videos/berkayTest.mp4',
           crimeProbability: 0.10,
           weaponProbability: 0.10,
           weaponType: "Gun",
@@ -93,7 +96,6 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
           timestamp: DateTime.now().subtract(const Duration(hours: 2)),
           crimeType: 'Theft',
         ),
-        // Diğer statik veriler...
       ];
     });
   }
@@ -171,9 +173,10 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
             : RefreshIndicator(
           color: Colors.red[700],
           backgroundColor: Colors.grey[900],
-          onRefresh: _fetchCrimeVideos, // 👈 Veriyi yeniden çeker
+          onRefresh: _fetchCrimeVideos,
           child: _selectedIndex == 0
               ? VideoListScreen(
+            key: _refreshKey, // 👈 Sayfayı sıfırdan başlatır
             videos: _crimeVideos,
             isAuthority: widget.isAuthority,
             onCrimeReported: _removeReportedCrime,
@@ -186,7 +189,6 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
           ),
         ),
       ),
-
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.grey[850],
@@ -214,7 +216,7 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
                 icon: Icon(
                   _selectedIndex == 0 ? Iconsax.video : Iconsax.video,
                   color:
-                      _selectedIndex == 0 ? Colors.red[700] : Colors.grey[500],
+                  _selectedIndex == 0 ? Colors.red[700] : Colors.grey[500],
                 ),
                 label: 'Videos',
               ),
@@ -222,7 +224,7 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
                 icon: Icon(
                   _selectedIndex == 1 ? Iconsax.warning_2 : Iconsax.warning_2,
                   color:
-                      _selectedIndex == 1 ? Colors.red[700] : Colors.grey[500],
+                  _selectedIndex == 1 ? Colors.red[700] : Colors.grey[500],
                 ),
                 label: 'Reports',
               ),

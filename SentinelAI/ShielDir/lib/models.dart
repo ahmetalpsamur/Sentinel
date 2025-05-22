@@ -53,7 +53,7 @@ class ReportedCrimesManager {
     'Officer Marifoğlu': 'officer.smith@police.gov',
     'Officer Arda': 'officer.smith@police.gov',
     'Detective Bulut': 'fikribarcabulut@gmail.com',
-    'Sergeant Samur': 'sergeant.williams@police.gov',
+    'Sergeant Samur': 'ahmetalpsamur@gmail.com',
     'Lieutenant Uzunbayır': 'lieutenant.brown@police.gov'
   };
 
