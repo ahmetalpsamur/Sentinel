@@ -82,29 +82,29 @@ def create_tables():
     CREATE TABLE IF NOT EXISTS segment(
         segment_id TEXT PRIMARY KEY,
         url TEXT,
+        global_url TEXT,
         description TEXT,
         weapon_score REAL,
         crime_score REAL,        
         crime_type TEXT,
         weapon_type TEXT,  
         reported BOOLEAN DEFAULT FALSE,
-        timestamp TEXT DEFAULT CURRENT_TIMESTAMP   
+        timestamp TEXT DEFAULT CURRENT_TIMESTAMP,
+        reported_at TEXT 
     )
     """)
+
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS video_predictions (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        video_id TEXT NOT NULL,
-        video_path TEXT NOT NULL,
-        top1_label TEXT NOT NULL,
-        top1_confidence REAL NOT NULL,
-        top2_label TEXT,
-        top2_confidence REAL,
-        top3_label TEXT,
-        top3_confidence REAL,
-        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+    CREATE TABLE IF NOT EXISTS reported_segment (
+        segment_id TEXT PRIMARY KEY,
+        notes TEXT,
+        latitude REAL,
+        longitude REAL,
+        mail TEXT,
+        FOREIGN KEY(segment_id) REFERENCES segment(segment_id)
     )
     """)
+
     conn.commit()
     conn.close()
     print("✅ Database initialized at", DB_PATH)

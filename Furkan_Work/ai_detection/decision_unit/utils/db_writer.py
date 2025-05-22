@@ -39,11 +39,12 @@ def segment_for_ui(segment):
 
     cursor.execute("""
     INSERT OR REPLACE INTO segment 
-    (segment_id, url, description, weapon_score, crime_type, weapon_type, timestamp)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    (segment_id, url,global_url, description, weapon_score, crime_type, weapon_type, timestamp)
+    VALUES (?, ?,?, ?, ?, ?, ?, ?)
     """, (
         segment["segment_id"],
         segment.get("url", ""),
+        segment.get("global_url",""),
         segment.get("description", ""),
         segment.get("weapon_score", 0.0),
         segment.get("crime_type", ""),

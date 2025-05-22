@@ -7,7 +7,7 @@ from utils.redis_config import get_redis_client
 from utils.logger import setup_logger
 from config import Config
 #from TRTModelService import TRTModelService
-from ai_unit.model_service import ModelService
+from model_service import ModelService
 from collections import Counter
 
 

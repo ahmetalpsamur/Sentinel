@@ -80,8 +80,6 @@ services:
         condition: service_healthy
       init:
         condition: service_completed_successfully
-      engine_builder:
-        condition: service_completed_successfully
     deploy:
       replicas: 3
       resources:

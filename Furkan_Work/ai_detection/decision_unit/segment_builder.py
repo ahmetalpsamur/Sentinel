@@ -301,7 +301,7 @@ def build_segment_for_video(video_id, frames, window_size=Config.SEGMENT_WINDOW_
             "path": output_path
         }
         try:
-            producer.send(Config.OUTPUT_TOPUC, kafka_msg)
+            producer.send(Config.OUTPUT_TOPIC, kafka_msg)
             producer.flush()
             logger.info(f"📤 Kafka'ya gönderildi: segment_id={segment_id}")
         except Exception as e:
