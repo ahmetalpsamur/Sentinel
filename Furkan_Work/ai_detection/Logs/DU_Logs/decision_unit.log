@@ -97,3 +97,12 @@
 2025-05-20 15:48:25,136 — INFO — Segment kaydedildi. Segment id:52601a9b-39cc-4556-912a-af34deca7348, uzunluk:15.8
 2025-05-20 15:48:25,161 — INFO — Segment UI kaydedildi. Segment id:52601a9b-39cc-4556-912a-af34deca7348
 2025-05-20 15:48:25,276 — INFO — 📤 Kafka'ya gönderildi: segment_id=52601a9b-39cc-4556-912a-af34deca7348
+2025-05-21 11:19:44,342 — INFO — ✅ Redis bağlantısı başarılı
+2025-05-21 11:19:44,345 — INFO — 🚀 Decision Unit started
+2025-05-21 11:19:44,353 — INFO — 🎯 Kafka consumer started on topic: ai_results
+2025-05-21 12:03:00,261 — INFO — ✅ Redis bağlantısı başarılı
+2025-05-21 12:03:00,263 — INFO — 🚀 Decision Unit started
+2025-05-21 12:03:00,267 — INFO — 🎯 Kafka consumer started on topic: ai_results
+2025-05-21 12:06:37,138 — INFO — ✅ Redis bağlantısı başarılı
+2025-05-21 12:06:37,141 — INFO — 🚀 Decision Unit started
+2025-05-21 12:06:37,145 — INFO — 🎯 Kafka consumer started on topic: ai_results

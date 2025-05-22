@@ -85,7 +85,7 @@ services:
           cpus: '4'
           memory: 8G
     healthcheck:
-      test: ["CMD", "python", "-c", "import torch; assert torch.cuda.is_available()"]
+      test: ["CMD", "python", "-c", "import pycuda.driver as cuda; cuda.init(); assert cuda.Device(0).name()"]
       interval: 30s
       timeout: 10s
       retries: 3

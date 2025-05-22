@@ -40,3 +40,25 @@
 2025-05-20 15:53:24,695 — INFO — Segment reported olarak işaretlendi: a5c54040-7a56-46d4-8429-895ff4940b82
 2025-05-20 15:53:31,921 — INFO — 2 segment Flutter'a gönderildi.
 2025-05-20 15:58:34,146 — INFO — 2 segment Flutter'a gönderildi.
+2025-05-21 11:19:44,867 — INFO — ✅ Kafka producer başarıyla başlatıldı.
+2025-05-21 11:43:29,000 — INFO — 2 segment Flutter'a gönderildi.
+2025-05-21 11:43:52,635 — ERROR — Stream hatası: 404: Video dosyası bulunamadı
+2025-05-21 11:44:04,960 — ERROR — Stream hatası: 404: Video dosyası bulunamadı
+2025-05-21 12:00:34,019 — ERROR — Stream hatası: 404: Segment bulunamadı
+2025-05-21 12:03:00,371 — INFO — ✅ Kafka producer başarıyla başlatıldı.
+2025-05-21 12:08:19,541 — INFO — Video alındı.
+2025-05-21 12:08:19,590 — INFO — Video kaydedildi: /app/data/uploaded_videos/feb156fb-bfa4-4578-ba13-da15a0ab83bd_Real1.mp4
+2025-05-21 12:08:19,607 — INFO — Kafka'ya mesaj gönderildi. Video ID: feb156fb-bfa4-4578-ba13-da15a0ab83bd
+2025-05-21 12:11:44,956 — INFO — Video alındı.
+2025-05-21 12:11:45,045 — INFO — Video kaydedildi: /app/data/uploaded_videos/2c2443d0-bb2c-4e23-a6c6-b975cd44ca17_Real1.mp4
+2025-05-21 12:11:45,049 — INFO — Kafka'ya mesaj gönderildi. Video ID: 2c2443d0-bb2c-4e23-a6c6-b975cd44ca17
+2025-05-21 12:12:21,828 — INFO — ✅ Kafka producer başarıyla başlatıldı.
+2025-05-21 12:12:48,325 — INFO — Video alındı.
+2025-05-21 12:12:48,375 — INFO — Video kaydedildi: /app/data/uploaded_videos/05afb1e9-6e2c-42e0-9290-a17beacefa32_Real1.mp4
+2025-05-21 12:12:48,378 — INFO — Kafka'ya mesaj gönderildi. Video ID: 05afb1e9-6e2c-42e0-9290-a17beacefa32
+2025-05-21 12:19:16,453 — INFO — Video alındı.
+2025-05-21 12:19:16,488 — INFO — Video kaydedildi: /app/data/uploaded_videos/bcf849e7-ad1a-4469-9178-d0e558208a86_Real1.mp4
+2025-05-21 12:19:16,490 — INFO — Kafka'ya mesaj gönderildi. Video ID: bcf849e7-ad1a-4469-9178-d0e558208a86
+2025-05-21 12:33:13,544 — INFO — Video alındı.
+2025-05-21 12:33:13,622 — INFO — Video kaydedildi: /app/data/uploaded_videos/c310de9b-7a1f-4034-8af9-fce1b24a8704_Real1.mp4
+2025-05-21 12:33:13,625 — INFO — Kafka'ya mesaj gönderildi. Video ID: c310de9b-7a1f-4034-8af9-fce1b24a8704

@@ -1,16 +1,17 @@
 import json
-import torch
-import logging
+#import torch
+#import logging
 from kafka_manager import KafkaManager
 from image_processor import ImageProcessor
 from utils.redis_config import get_redis_client
 from utils.logger import setup_logger
 from config import Config
-from model_service import ModelService
-from collections import Counter
+from TRTModelService import TRTModelService
+#from collections import Counter
 
-
+flush_counter = 0
 def main():
+    global flush_counter
     # Logger kurulumu
     logger = setup_logger()
     
@@ -19,8 +20,8 @@ def main():
         kafka_manager = KafkaManager()
         
         image_processor = ImageProcessor()
-        model_service = ModelService()
-        #model_service = TRTModelService("models/model.engine")
+        #model_service = ModelService()
+        model_service = TRTModelService("models/model.engine")
         redis_client = get_redis_client()
         
         # Kafka bağlantıları
@@ -35,8 +36,8 @@ def main():
                 process_message(msg, image_processor, model_service, redis_client, producer)
             except Exception as e:
                 logger.error(f"Message processing failed: {e}")
-                if model_service.device.type == 'cuda':
-                    torch.cuda.empty_cache()
+                #if model_service.device.type == 'cuda':
+                 #   torch.cuda.empty_cache()
 
     
     except KeyboardInterrupt:
@@ -44,10 +45,17 @@ def main():
     except Exception as e:
         logger.error(f"❌ Fatal error: {e}")
     finally:
+        if 'producer' in locals():
+            try:
+                producer.flush()
+                logger.info("📤 Final producer flush done.")
+            except Exception as e:
+                logger.warning(f"Flush failed during shutdown: {e}")
+            producer.close()
+            logger.info("🔒 Kafka producer closed.")
         if 'consumer' in locals():
             consumer.close()
-        if 'producer' in locals():
-            producer.close()
+            logger.info("🔒 Kafka consumer closed.")
         logger.info("🔌 Resources released")
 
 def process_message(msg, image_processor, model_service, redis_client, producer):
@@ -95,7 +103,11 @@ def process_message(msg, image_processor, model_service, redis_client, producer)
 
         # Kafka'ya gönder
         producer.send(Config.OUTPUT_TOPIC, result)
-        producer.flush()
+        flush_counter += 1
+
+        if flush_counter >= 20:
+            producer.flush()
+            flush_counter = 0
 
         logger.info(f"✅ Processed frame {frame_id} with {len(predictions)} detections — frame index: {frame_index}")
         for i, pred in enumerate(predictions):
