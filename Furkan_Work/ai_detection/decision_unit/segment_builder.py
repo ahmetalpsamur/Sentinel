@@ -284,7 +284,7 @@ def build_segment_for_video(video_id, frames, window_size=Config.SEGMENT_WINDOW_
             "segment_id": segment_id,
             "weapon_score": segment_metadata["score"],
             "weapon_type": dominant_weapon,
-            "url": f"http://{Config.BACKEND_HOST}:{Config.BACKEND_PORT}/watch/{segment_id}",
+            "url": f"http://{Config.BACKEND_HOST}:{Config.BACKEND_PORT}/stream/{segment_id}",
             "description": "",
             "crime_type": ""
         }

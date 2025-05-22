@@ -1,0 +1,19 @@
+2025-05-22 06:50:24,322 — WARNING — ⚠️ ONNX dosyası bulunamadı, yeniden oluşturulacak...
+2025-05-22 06:50:24,322 — INFO — ▶️ ONNX dönüşümü başlatılıyor...
+2025-05-22 06:50:56,917 — INFO — 📁 Oluşan ONNX dosyaları: ['models/model.onnx']
+2025-05-22 06:50:56,919 — INFO — ✅ ONNX modeli oluşturuldu: models/model_1280.onnx
+2025-05-22 06:50:56,921 — INFO — ▶️ TensorRT engine oluşturuluyor...
+2025-05-22 06:50:56,997 — ERROR — ❌ Engine oluşturma hatası: pybind11::init(): factory function returned nullptr
+Traceback (most recent call last):
+  File "/app/convert_to_engine.py", line 56, in build_engine
+    builder = trt.Builder(TRT_LOGGER)
+TypeError: pybind11::init(): factory function returned nullptr
+2025-05-22 06:50:56,998 — ERROR — 🧯 Dönüşüm işlemi başarısız: pybind11::init(): factory function returned nullptr
+2025-05-22 06:50:56,998 — ERROR — 🛑 Engine üretilemedi. Çıkış yapılıyor.
+2025-05-22 06:55:03,445 — INFO — ⏩ Zaten mevcut bir .engine dosyası bulundu, yeniden oluşturulmadı.
+2025-05-22 06:55:25,505 — INFO — 🔁 Mevcut ONNX dosyası kullanılacak.
+2025-05-22 06:55:25,506 — INFO — ▶️ TensorRT engine oluşturuluyor...
+2025-05-22 06:55:32,389 — INFO — ⚡ FP16 desteği etkinleştirildi.
+2025-05-22 06:55:32,614 — INFO — 📌 ONNX giriş ismi: images
+2025-05-22 07:00:25,991 — INFO — ✅ TensorRT engine başarıyla kaydedildi: models/model.engine
+2025-05-22 07:00:26,334 — INFO — 🎉 Tüm dönüşüm işlemleri başarıyla tamamlandı.

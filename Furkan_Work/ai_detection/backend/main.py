@@ -126,6 +126,41 @@ async def get_all_segments():
     except Exception as e:
         logger.error(f"Segment verileri alınamadı: {e}")
         raise HTTPException(status_code=500, detail="Database error.")
+    
+@app.get("/reported_segments/")
+async def get_all_reported_segments():
+    try:
+        async with aiosqlite.connect(DB_PATH) as db:
+            db.row_factory = aiosqlite.Row
+            cursor = await db.execute("""
+                SELECT s.segment_id,s.url, s.description, s.weapon_score, s.crime_score, 
+                       s.weapon_type, s.timestamp, s.crime_type 
+                FROM segment s 
+                WHERE s.reported=1
+            """)
+            rows = await cursor.fetchall()
+            await cursor.close()
+
+        segments = []
+        for row in rows:
+            segments.append({
+                "id": row["segment_id"],
+                "title": row["description"][:50],  
+                "description": row["description"],
+                "videoUrl": row["url"],
+                "crimeProbability": row["crime_score"],
+                "weaponProbability": row["weapon_score"],
+                "weaponType": row["weapon_type"],
+                "timestamp": row["timestamp"],
+                "crimeType": row["crime_type"]
+            })
+
+        logger.info(f"{len(segments)} segment Flutter'a gönderildi.")
+        return {"videos": segments}
+
+    except Exception as e:
+        logger.error(f"Segment verileri alınamadı: {e}")
+        raise HTTPException(status_code=500, detail="Database error.")
 
 @app.post("/segments/report/{segment_id}")
 async def report_segment(segment_id: str):

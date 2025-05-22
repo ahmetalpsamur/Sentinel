@@ -62,3 +62,74 @@
 2025-05-21 12:33:13,544 — INFO — Video alındı.
 2025-05-21 12:33:13,622 — INFO — Video kaydedildi: /app/data/uploaded_videos/c310de9b-7a1f-4034-8af9-fce1b24a8704_Real1.mp4
 2025-05-21 12:33:13,625 — INFO — Kafka'ya mesaj gönderildi. Video ID: c310de9b-7a1f-4034-8af9-fce1b24a8704
+2025-05-21 17:36:11,859 — INFO — ✅ Kafka producer başarıyla başlatıldı.
+2025-05-21 17:41:44,533 — INFO — Video alındı.
+2025-05-21 17:41:44,574 — INFO — Video kaydedildi: /app/data/uploaded_videos/80a7d8d8-14be-471a-8113-db1ac8ac1633_Real1.mp4
+2025-05-21 17:41:44,590 — INFO — Kafka'ya mesaj gönderildi. Video ID: 80a7d8d8-14be-471a-8113-db1ac8ac1633
+2025-05-21 17:50:36,293 — INFO — 4 segment Flutter'a gönderildi.
+2025-05-21 17:50:38,576 — ERROR — Hata: 404: Video dosyası bulunamadı
+2025-05-21 17:50:38,679 — ERROR — Hata: 404: Video dosyası bulunamadı
+2025-05-21 17:51:20,777 — ERROR — Hata: 404: Video dosyası bulunamadı
+2025-05-21 17:51:22,811 — ERROR — Hata: 404: Video dosyası bulunamadı
+2025-05-21 17:52:04,289 — ERROR — Hata: 404: Video dosyası bulunamadı
+2025-05-21 17:52:05,131 — ERROR — Hata: 404: Video dosyası bulunamadı
+2025-05-21 17:52:32,262 — ERROR — Hata: 404: Video dosyası bulunamadı
+2025-05-21 17:52:37,150 — ERROR — Hata: 404: Video dosyası bulunamadı
+2025-05-21 17:53:27,491 — ERROR — Hata: 404: Segment bulunamadı
+2025-05-21 17:54:01,633 — INFO — 4 segment Flutter'a gönderildi.
+2025-05-21 17:55:40,163 — ERROR — Hata: 404: Video dosyası bulunamadı
+2025-05-21 17:55:43,136 — ERROR — Hata: 404: Video dosyası bulunamadı
+2025-05-21 17:58:30,771 — ERROR — Hata: 404: Video dosyası bulunamadı
+2025-05-21 18:00:25,404 — INFO — 4 segment Flutter'a gönderildi.
+2025-05-21 18:00:25,921 — ERROR — Hata: 404: Video dosyası bulunamadı
+2025-05-21 18:00:25,941 — ERROR — Hata: 404: Video dosyası bulunamadı
+2025-05-21 18:00:27,994 — ERROR — Hata: 404: Video dosyası bulunamadı
+2025-05-21 18:04:05,247 — INFO — 4 segment Flutter'a gönderildi.
+2025-05-21 18:04:06,595 — ERROR — Hata: 404: Video dosyası bulunamadı
+2025-05-21 18:04:06,758 — ERROR — Hata: 404: Video dosyası bulunamadı
+2025-05-21 18:12:53,259 — INFO — 4 segment Flutter'a gönderildi.
+2025-05-21 18:12:55,402 — ERROR — Hata: 404: Video dosyası bulunamadı
+2025-05-21 18:12:55,997 — ERROR — Hata: 404: Video dosyası bulunamadı
+2025-05-21 18:32:34,269 — INFO — 4 segment Flutter'a gönderildi.
+2025-05-21 18:32:36,422 — ERROR — Hata: 404: Video dosyası bulunamadı
+2025-05-21 18:32:36,779 — ERROR — Hata: 404: Video dosyası bulunamadı
+2025-05-22 05:27:37,078 — WARNING — ❗ Kafka bağlantısı denemesi başarısız (1/10): NoBrokersAvailable
+2025-05-22 05:27:42,211 — WARNING — ❗ Kafka bağlantısı denemesi başarısız (2/10): NoBrokersAvailable
+2025-05-22 05:49:07,013 — INFO — ✅ Kafka producer başarıyla başlatıldı.
+2025-05-22 06:32:02,141 — INFO — Video alındı.
+2025-05-22 06:32:02,191 — INFO — Video kaydedildi: /app/data/uploaded_videos/4589e396-74c1-4aa0-9c13-387de396b945_Real1.mp4
+2025-05-22 06:32:02,241 — INFO — Kafka'ya mesaj gönderildi. Video ID: 4589e396-74c1-4aa0-9c13-387de396b945
+2025-05-22 07:01:12,682 — INFO — Video alındı.
+2025-05-22 07:01:12,724 — INFO — Video kaydedildi: /app/data/uploaded_videos/8d4534a6-b5bd-45bf-892f-5fa744aaa2b4_Real1.mp4
+2025-05-22 07:01:12,768 — INFO — Kafka'ya mesaj gönderildi. Video ID: 8d4534a6-b5bd-45bf-892f-5fa744aaa2b4
+2025-05-22 07:18:23,680 — INFO — ✅ Kafka producer başarıyla başlatıldı.
+2025-05-22 07:20:24,626 — INFO — Video alındı.
+2025-05-22 07:20:24,672 — INFO — Video kaydedildi: /app/data/uploaded_videos/489f8d7e-324d-49d1-836f-de22f8db8d7a_Real1.mp4
+2025-05-22 07:20:24,691 — INFO — Kafka'ya mesaj gönderildi. Video ID: 489f8d7e-324d-49d1-836f-de22f8db8d7a
+2025-05-22 07:29:07,468 — INFO — Video alındı.
+2025-05-22 07:29:07,509 — INFO — Video kaydedildi: /app/data/uploaded_videos/1acc0e7d-3477-4cdf-9573-7af9f5b1e624_Real1.mp4
+2025-05-22 07:29:07,515 — INFO — Kafka'ya mesaj gönderildi. Video ID: 1acc0e7d-3477-4cdf-9573-7af9f5b1e624
+2025-05-22 07:38:57,385 — INFO — Video alındı.
+2025-05-22 07:38:57,425 — INFO — Video kaydedildi: /app/data/uploaded_videos/1a45232a-8732-4a4a-8dd2-19607ca77a99_Real1.mp4
+2025-05-22 07:38:57,427 — INFO — Kafka'ya mesaj gönderildi. Video ID: 1a45232a-8732-4a4a-8dd2-19607ca77a99
+2025-05-22 07:43:03,265 — INFO — Video alındı.
+2025-05-22 07:43:03,301 — INFO — Video kaydedildi: /app/data/uploaded_videos/eff0bb38-8a32-47af-b7ee-909b63541d34_Real1.mp4
+2025-05-22 07:43:03,303 — INFO — Kafka'ya mesaj gönderildi. Video ID: eff0bb38-8a32-47af-b7ee-909b63541d34
+2025-05-22 07:49:31,565 — INFO — Video alındı.
+2025-05-22 07:49:31,604 — INFO — Video kaydedildi: /app/data/uploaded_videos/cb41fdce-0c42-4afb-beae-e47b7e50faac_Real1.mp4
+2025-05-22 07:49:31,607 — INFO — Kafka'ya mesaj gönderildi. Video ID: cb41fdce-0c42-4afb-beae-e47b7e50faac
+2025-05-22 07:51:59,483 — INFO — Video alındı.
+2025-05-22 07:51:59,522 — INFO — Video kaydedildi: /app/data/uploaded_videos/f847a94e-d978-4fbd-9ca6-3d653f088615_Real1.mp4
+2025-05-22 07:51:59,524 — INFO — Kafka'ya mesaj gönderildi. Video ID: f847a94e-d978-4fbd-9ca6-3d653f088615
+2025-05-22 07:55:12,120 — INFO — Video alındı.
+2025-05-22 07:55:12,173 — INFO — Video kaydedildi: /app/data/uploaded_videos/c994accb-cb4c-4259-8db2-6e63fb589883_Real1.mp4
+2025-05-22 07:55:12,175 — INFO — Kafka'ya mesaj gönderildi. Video ID: c994accb-cb4c-4259-8db2-6e63fb589883
+2025-05-22 08:01:05,038 — INFO — Video alındı.
+2025-05-22 08:01:05,090 — INFO — Video kaydedildi: /app/data/uploaded_videos/f48c7f6c-c58a-4163-a95b-441db5db0cfd_Real1.mp4
+2025-05-22 08:01:05,110 — INFO — Kafka'ya mesaj gönderildi. Video ID: f48c7f6c-c58a-4163-a95b-441db5db0cfd
+2025-05-22 10:21:02,831 — INFO — Video alındı.
+2025-05-22 10:21:03,147 — INFO — Video kaydedildi: /app/data/uploaded_videos/5858f7bb-4049-4c82-af05-599f3c842824_Real1.mp4
+2025-05-22 10:21:03,253 — INFO — Kafka'ya mesaj gönderildi. Video ID: 5858f7bb-4049-4c82-af05-599f3c842824
+2025-05-22 14:23:46,619 — INFO — ✅ Kafka producer başarıyla başlatıldı.
+2025-05-22 14:24:51,220 — INFO — 9 segment Flutter'a gönderildi.
+2025-05-22 14:25:21,753 — INFO — 9 segment Flutter'a gönderildi.
