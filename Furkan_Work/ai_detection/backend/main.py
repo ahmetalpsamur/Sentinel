@@ -9,7 +9,7 @@ from fastapi import APIRouter
 from pathlib import Path
 from fastapi.middleware.cors import CORSMiddleware
 
-
+from fastapi import Request
 
 app = FastAPI()
 app.add_middleware(
@@ -99,7 +99,7 @@ async def get_all_segments():
             db.row_factory = aiosqlite.Row
             cursor = await db.execute("""
                 SELECT s.segment_id,s.url, s.description, s.weapon_score, s.crime_score, 
-                       s.weapon_type, s.timestamp, s.crime_type 
+                       s.weapon_type, s.timestamp, s.crime_type, s.longitude,s.latitude
                 FROM segment s 
                 WHERE s.reported=0
             """)
@@ -117,7 +117,11 @@ async def get_all_segments():
                 "weaponProbability": row["weapon_score"],
                 "weaponType": row["weapon_type"],
                 "timestamp": row["timestamp"],
-                "crimeType": row["crime_type"]
+                "crimeType": row["crime_type"],
+                "location": {
+                    "longitude": row["longitude"],
+                    "latitude": row["latitude"]
+                },
             })
 
         logger.info(f"{len(segments)} segment Flutter'a gönderildi.")
@@ -126,11 +130,67 @@ async def get_all_segments():
     except Exception as e:
         logger.error(f"Segment verileri alınamadı: {e}")
         raise HTTPException(status_code=500, detail="Database error.")
-
-@app.post("/segments/report/{segment_id}")
-async def report_segment(segment_id: str):
+    
+@app.get("/reported_segments/")
+async def get_all_reported_segments():
     try:
         async with aiosqlite.connect(DB_PATH) as db:
+            db.row_factory = aiosqlite.Row
+            cursor = await db.execute("""
+                SELECT s.segment_id,s.url, s.description, s.weapon_score, s.crime_score, 
+                       s.weapon_type, s.timestamp, s.crime_type,s.reported_at,s.longitude,
+                        s.latitude,s.officer_name,s.status,s.notes
+                FROM segment s 
+                WHERE s.reported=1
+            """)
+            rows = await cursor.fetchall()
+            await cursor.close()
+
+        segments = [
+            {
+                "id": row["segment_id"],
+                "title": row["description"][:50] if row["description"] else "No Description",
+                "description": row["description"],
+                "videoUrl": row["url"],
+                "crimeProbability": row["crime_score"],
+                "weaponProbability": row["weapon_score"],
+                "weaponType": row["weapon_type"],
+                "timestamp": row["timestamp"],
+                "crimeType": row["crime_type"],
+                "reportedAt": row["reported_at"],
+                "location": {
+                    "longitude": row["longitude"],
+                    "latitude": row["latitude"]
+                },
+                "officerName": row["officer_name"],
+                "status": row["status"],
+                "notes": row["notes"]
+            }
+            for row in rows
+        ]
+
+        logger.info(f"{len(segments)} segment Flutter'a gönderildi.")
+        return {"videos": segments}
+
+    except Exception as e:
+        logger.error(f"Segment verileri alınamadı: {e}")
+        raise HTTPException(status_code=500, detail="Database error.")
+
+
+
+@app.post("/segments/report/")
+async def report_segment_with_details(request: Request):
+    try:
+        data = await request.json()
+        segment_id = data.get("segment_id")
+        status="Pending"
+
+        # Zorunlu alanlar kontrolü
+        if not all([segment_id, status]):
+            raise HTTPException(status_code=400, detail="Missing required fields")
+
+        async with aiosqlite.connect(DB_PATH) as db:
+            # Segment var mı kontrolü
             cursor = await db.execute(
                 "SELECT segment_id FROM segment WHERE segment_id = ?", (segment_id,)
             )
@@ -141,16 +201,117 @@ async def report_segment(segment_id: str):
                 logger.warning(f"Segment bulunamadı: {segment_id}")
                 raise HTTPException(status_code=404, detail="Segment not found")
 
+            # segment tablosunu güncelle
             await db.execute(
-                "UPDATE segment SET reported = 1 WHERE segment_id = ?", (segment_id,)
+                """
+                UPDATE segment 
+                SET reported = 1, reported_at = CURRENT_TIMESTAMP,status=?
+                WHERE segment_id = ?
+                """,
+                (status,segment_id)
             )
+
+
+
             await db.commit()
 
-        logger.info(f"Segment reported olarak işaretlendi: {segment_id}")
-        return {"message": f"Segment {segment_id} successfully marked as reported."}
+        logger.info(f"Segment {segment_id} reported olarak işaretlendi ve detaylar kaydedildi.")
+        return {"message": f"Segment {segment_id} successfully reported and details saved."}
 
     except Exception as e:
         logger.error(f"Segment report işlemi başarısız: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error.")
+
+
+@app.put("/update_report")
+async def update_report(request: Request):
+    try:
+        data=await request.json()
+        segment_id=data.get("segment_id")
+        officer_name=data.get("officerName")
+        status=data.get("status")
+        notes=data.get("notes")
+
+        # Zorunlu alanlar kontrolü
+        if not all([segment_id, status,officer_name,notes]):
+            raise HTTPException(status_code=400, detail="Missing required fields")
+
+        async with aiosqlite.connect(DB_PATH) as db:
+            # Segment var mı kontrolü
+            cursor = await db.execute(
+                "SELECT segment_id FROM segment WHERE segment_id = ?", (segment_id,)
+            )
+            row = await cursor.fetchone()
+            await cursor.close()
+
+            if row is None:
+                logger.warning(f"Segment bulunamadı: {segment_id}")
+                raise HTTPException(status_code=404, detail="Segment not found")
+
+            # segment tablosunu güncelle
+            await db.execute(
+                """
+                UPDATE segment 
+                SET status = ?,officer_name=?,notes=?  
+                WHERE segment_id = ?
+                """,
+                (status,officer_name,notes,segment_id)
+            )
+
+            await db.commit()
+
+        logger.info(f"Segment {segment_id} reported olarak işaretlendi ve detaylar kaydedildi.")
+        return {"message": f"Segment {segment_id} successfully reported and details saved."}
+
+    except Exception as e:
+        logger.error(f"Segment report işlemi başarısız: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error.")
+
+
+@app.get("/segment_to_mail/")
+async def get_reported_segments():
+    try:
+        async with aiosqlite.connect(DB_PATH) as db:
+            db.row_factory = aiosqlite.Row
+            cursor = await db.execute("""
+                SELECT 
+                    s.description AS title,
+                    s.url,
+                    s.crime_type,
+                    s.crime_score,
+                    s.weapon_type,
+                    s.reported_at,
+                    rs.segment_id,
+                    rs.notes,
+                    rs.latitude,
+                    rs.longitude,
+                    rs.mail
+                FROM segment s
+                JOIN reported_segment rs ON s.segment_id = rs.segment_id
+            """)
+            rows = await cursor.fetchall()
+            await cursor.close()
+
+        result = []
+        for row in rows:
+            result.append({
+                "segment_id": row["segment_id"],
+                "title": row["title"],
+                "url": row["url"],
+                "crime_type": row["crime_type"],
+                "crime_score": row["crime_score"],
+                "weapon_type": row["weapon_type"],
+                "reported_at": row["reported_at"],
+                "notes": row["notes"],
+                "latitude": row["latitude"],
+                "longitude": row["longitude"],
+                "mail": row["mail"]
+            })
+
+        return {"reported_segments": result}
+
+    except Exception as e:
+        logger.error(f"Reported segment verileri alınamadı: {e}")
         raise HTTPException(status_code=500, detail="Internal server error.")
 
 @app.get("/watch/{segment_id}", response_class=HTMLResponse)

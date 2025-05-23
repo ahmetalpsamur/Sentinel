@@ -39,8 +39,8 @@ def segment_for_ui(segment):
 
     cursor.execute("""
     INSERT OR REPLACE INTO segment 
-    (segment_id, url, description, weapon_score, crime_type, weapon_type, timestamp)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    (segment_id, url, description, weapon_score, crime_type, weapon_type,latitude,longitude,timestamp)
+    VALUES (?, ?,?, ?, ?, ?, ?, ?,?)
     """, (
         segment["segment_id"],
         segment.get("url", ""),
@@ -48,6 +48,8 @@ def segment_for_ui(segment):
         segment.get("weapon_score", 0.0),
         segment.get("crime_type", ""),
         segment.get("weapon_type", "unknown"),
+        segment.get("latitude",""),
+        segment.get("longitude",""),
         datetime.now().isoformat()
     ))
 

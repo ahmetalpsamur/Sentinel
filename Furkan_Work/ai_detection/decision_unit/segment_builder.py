@@ -12,6 +12,7 @@ import uuid
 import subprocess
 from collections import Counter
 from utils.kafka_config import get_segment_kafka_producer
+import random
 
 logger = setup_logger()
 redis_client = get_redis_client()
@@ -284,7 +285,9 @@ def build_segment_for_video(video_id, frames, window_size=Config.SEGMENT_WINDOW_
             "segment_id": segment_id,
             "weapon_score": segment_metadata["score"],
             "weapon_type": dominant_weapon,
-            "url": f"http://{Config.BACKEND_HOST}:{Config.BACKEND_PORT}/watch/{segment_id}",
+            "url": f"http://{Config.BACKEND_HOST}:{Config.BACKEND_PORT}/stream/{segment_id}",
+            "longitude":round(random.uniform(26.0, 29.8), 6),
+            "latitude":round(random.uniform(37.0, 39.8), 6),
             "description": "",
             "crime_type": ""
         }
@@ -301,7 +304,7 @@ def build_segment_for_video(video_id, frames, window_size=Config.SEGMENT_WINDOW_
             "path": output_path
         }
         try:
-            producer.send(Config.OUTPUT_TOPUC, kafka_msg)
+            producer.send(Config.OUTPUT_TOPIC, kafka_msg)
             producer.flush()
             logger.info(f"📤 Kafka'ya gönderildi: segment_id={segment_id}")
         except Exception as e:

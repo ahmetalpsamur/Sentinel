@@ -20,20 +20,17 @@ logger = setup_logger()
 consumer = create_consumer("video_uploaded")
 
 
-def save_to_redis(frame_id,frame_index, data, redis_client):
+def save_to_redis(frame_id, frame_index, data, redis_client):
     if not redis_client:
         logger.warning("🚫 Redis istemcisi mevcut değil. Frame saklanamadı.")
         return
     try:
-
-        redis_client.setex(f"frame:{frame_id}", 300, json.dumps(data))
-
-
-        redis_client.setex(f"frame_index:{frame_index}", 300, frame_id)
-        logger.debug(f"✅ Redis'e kaydedildi: frame:{frame_id}")
+        # Önce index kaydını yap, sonra frame datasını
+        redis_client.setex(f"frame_index:{frame_index}", 420, frame_id)
+        redis_client.setex(f"frame:{frame_id}", 420, json.dumps(data))
+        logger.debug(f"✅ Redis'e kaydedildi: index:{frame_index} -> frame:{frame_id}")
     except Exception as e:
         logger.error(f"❌ Redis'e yazarken hata: {e}")
-
 
 def send_to_kafka(data, producer):
     try:
@@ -105,6 +102,7 @@ def process_video(video_path):
         index += 1
 
     cap.release()
+    executor.shutdown(wait=True)  
     logger.info(f"🏁 Video işleme tamamlandı: {video_path}")
 
     try:
