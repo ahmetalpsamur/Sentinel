@@ -7,6 +7,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 
   class VideoListScreen extends StatelessWidget {
     final List<CrimeVideo> videos;
@@ -574,20 +577,55 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> with WidgetsBindi
                     const SizedBox(width: 16),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () {
-                          ReportedCrimesManager.reportCrime(widget.video);
-                          widget.onCrimeReported(widget.video.id);
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'Incident reported to authorities',
-                                style: GoogleFonts.rajdhani(),
+                        onPressed: () async {
+                          try {
+                            // Yükleniyor göstergesi
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (context) => const Center(
+                                child: CircularProgressIndicator(color: Colors.red),
                               ),
-                              backgroundColor: Colors.red[800],
-                            ),
-                          );
+                            );
+
+                            final response = await http.post(
+                              Uri.parse('http://shieldir.local:8000/segments/report/'),
+                              headers: {'Content-Type': 'application/json'},
+                              body: jsonEncode({'segment_id': widget.video.id}),
+                            );
+
+                            Navigator.pop(context); // loading
+
+                            if (response.statusCode == 200) {
+                              ReportedCrimesManager.reportCrime(widget.video);
+                              widget.onCrimeReported(widget.video.id);
+                              Navigator.pop(context); // dialog
+                              Navigator.pop(context); // detay sayfası
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Incident reported to authorities',
+                                    style: GoogleFonts.rajdhani(),
+                                  ),
+                                  backgroundColor: Colors.red[800],
+                                ),
+                              );
+                            } else {
+                              throw Exception('Failed to report. Status code: ${response.statusCode}');
+                            }
+                          } catch (e) {
+                            Navigator.pop(context); // loading
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Error: ${e.toString()}',
+                                  style: GoogleFonts.rajdhani(),
+                                ),
+                                backgroundColor: Colors.red[800],
+                              ),
+                            );
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red[800],

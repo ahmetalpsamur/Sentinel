@@ -39,7 +39,7 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
 
     try {
       final response = await http
-          .get(Uri.parse('http://localhost/furkanData.json'))
+          .get(Uri.parse('http://shieldir.local:8000/segments/'))
           .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
@@ -58,7 +58,10 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
               weaponProbability:
               (videoJson['weaponProbability'] ?? 0.0).toDouble(),
               weaponType: videoJson['weaponType'] ?? 'Unknown',
-              location: const LatLng(0.0, 0.0),
+              location: LatLng(
+                (videoJson['location']?['latitude'] ?? 0.0).toDouble(),
+                (videoJson['location']?['longitude'] ?? 0.0).toDouble(),
+              ),
               timestamp: DateTime.parse(
                   videoJson['timestamp'] ?? DateTime.now().toString()),
               crimeType: videoJson['crimeType'] ?? 'Unknown',
