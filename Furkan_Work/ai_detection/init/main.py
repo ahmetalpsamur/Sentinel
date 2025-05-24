@@ -88,23 +88,18 @@ def create_tables():
         crime_type TEXT,
         weapon_type TEXT,  
         reported BOOLEAN DEFAULT FALSE,
-        timestamp TEXT DEFAULT CURRENT_TIMESTAMP   
+        timestamp TEXT DEFAULT CURRENT_TIMESTAMP,
+        reported_at TEXT,
+        longitude REAL,
+        latitude REAL,
+        officer_name TEXT,
+        status TEXT,
+        notes TEXT
     )
     """)
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS video_predictions (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        video_id TEXT NOT NULL,
-        video_path TEXT NOT NULL,
-        top1_label TEXT NOT NULL,
-        top1_confidence REAL NOT NULL,
-        top2_label TEXT,
-        top2_confidence REAL,
-        top3_label TEXT,
-        top3_confidence REAL,
-        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-    """)
+
+
+
     conn.commit()
     conn.close()
     print("✅ Database initialized at", DB_PATH)

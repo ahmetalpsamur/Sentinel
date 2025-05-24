@@ -21,6 +21,13 @@ services:
     env_file:
       - .env
     restart: unless-stopped
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    depends_on:
+      - fastapi_backend
+    command: tunnel --url http://fastapi_backend:8000
+    restart: unless-stopped
     
   frame_splitter:
     build:
@@ -74,7 +81,7 @@ services:
       init:
         condition: service_completed_successfully
     deploy:
-      replicas: 4
+      replicas: 3
       resources:
         reservations:
           devices:
@@ -82,10 +89,9 @@ services:
               count: 1
               capabilities: [gpu]
         limits:
-          cpus: '4'
-          memory: 8G
+          memory: 8192M
     healthcheck:
-      test: ["CMD", "python", "-c", "import pycuda.driver as cuda; cuda.init(); assert cuda.Device(0).name()"]
+      test: ["CMD", "python", "-c", "import torch; assert torch.cuda.is_available()"]
       interval: 30s
       timeout: 10s
       retries: 3
