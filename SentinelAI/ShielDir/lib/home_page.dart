@@ -179,7 +179,7 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
           onRefresh: _fetchCrimeVideos,
           child: _selectedIndex == 0
               ? VideoListScreen(
-            key: _refreshKey, // 👈 Sayfayı sıfırdan başlatır
+            key: _refreshKey,
             videos: _crimeVideos,
             isAuthority: widget.isAuthority,
             onCrimeReported: _removeReportedCrime,
@@ -187,7 +187,7 @@ class _CrimeDetectionHomePageState extends State<CrimeDetectionHomePage> {
               : _selectedIndex == 1
               ? const ReportedCrimesScreen()
               : AnalyticsScreen(
-            videos: _crimeVideos,
+
             isAuthority: widget.isAuthority,
           ),
         ),

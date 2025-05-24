@@ -9,6 +9,7 @@ import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'home_page.dart';
 
 
   class VideoListScreen extends StatelessWidget {
@@ -296,6 +297,11 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> with WidgetsBindi
               CrimeProbabilityIndicator(
                 probability: widget.video.crimeProbability,
                 type: widget.video.crimeType,
+                weaponType: widget.video.weaponType,
+              ),
+              CrimeProbabilityIndicator(
+                probability: widget.video.weaponProbability!,
+                type: 'weapon',
                 weaponType: widget.video.weaponType,
               ),
               const SizedBox(width: 16),
@@ -594,13 +600,22 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> with WidgetsBindi
                               body: jsonEncode({'segment_id': widget.video.id}),
                             );
 
-                            Navigator.pop(context); // loading
+                            Navigator.pop(context); // loading dialogunu kapat
 
                             if (response.statusCode == 200) {
                               ReportedCrimesManager.reportCrime(widget.video);
                               widget.onCrimeReported(widget.video.id);
-                              Navigator.pop(context); // dialog
-                              Navigator.pop(context); // detay sayfası
+
+                              // Ana sayfayı yenilemek için:
+                              Navigator.pop(context); // report dialogunu kapat
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CrimeDetectionHomePage(
+                                    isAuthority: widget.isAuthority,
+                                  ),
+                                ),
+                              );
 
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -615,7 +630,7 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> with WidgetsBindi
                               throw Exception('Failed to report. Status code: ${response.statusCode}');
                             }
                           } catch (e) {
-                            Navigator.pop(context); // loading
+                            Navigator.pop(context); // loading dialogunu kapat
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(

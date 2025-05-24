@@ -239,56 +239,120 @@ class _ReportedCrimesScreenState extends State<ReportedCrimesScreen> {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>New Crime Assignment</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 700px; margin: 0 auto; padding: 20px; background-color: #f9f9f9; }
-        .container { background-color: #fff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 30px; margin-top: 20px; }
-        h2 { color: #2c3e50; margin-top: 0; border-bottom: 2px solid #eaeaea; padding-bottom: 10px; }
-        h3 { color: #3498db; margin-top: 25px; }
-        ul { padding-left: 20px; }
-        li { margin-bottom: 8px; }
-        strong { color: #2c3e50; font-weight: 600; }
-        .probability-high { color: #e74c3c; font-weight: bold; }
-        .probability-medium { color: #f39c12; font-weight: bold; }
-        .probability-low { color: #27ae60; font-weight: bold; }
-        .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #eaeaea; font-size: 0.9em; color: #7f8c8d; }
-        .badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 0.8em; font-weight: bold; margin-left: 8px; }
-        .crime-type { background-color: #e8f4fc; color: #2980b9; }
-        .status-new { background-color: #d4edda; color: #155724; }
-        .location-link { font-family: monospace; background-color: #f8f9fa; padding: 2px 5px; border-radius: 3px; color: #3498db; text-decoration: none; }
-        .location-link:hover { text-decoration: underline; }
-        .action-button { display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #3498db; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; }
-        .action-button:hover { background-color: #2980b9; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #000;
+            color: #fff;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(255, 0, 0, 0.5);
+            padding: 30px;
+            margin-top: 20px;
+            border: 2px solid #ff0000;
+        }
+        h2 {
+            color: #ff0000;
+            border-bottom: 2px solid #ff3333;
+            padding-bottom: 10px;
+        }
+        h3 {
+            color: #ffffff;
+            margin-top: 25px;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        strong {
+            color: #ff3333;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 8px;
+            background-color: #ff0000;
+            color: #fff;
+        }
+        .location-link {
+            font-family: monospace;
+            background-color: #2c2c2c;
+            padding: 2px 5px;
+            border-radius: 3px;
+            color: #ff6666;
+            text-decoration: none;
+        }
+        .location-link:hover {
+            text-decoration: underline;
+        }
+        .action-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #ff0000;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .action-button:hover {
+            background-color: #cc0000;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ff3333;
+            font-size: 0.9em;
+            color: #ccc;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo img {
+            max-width: 200px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="logo">
+            <img src="https://storage.googleapis.com/shieldir_videos/ShilDir_only_logo_transparent.png" alt="ShieldDir Logo" style="width: 150px; height: auto;">
+        </div>
         <h2>New Crime Assignment</h2>
         <p>You have been assigned to investigate a new case. Please review the details below and take appropriate action.</p>
         
         <h3>Case Details</h3>
         <ul>
             <li><strong>Title:</strong> ${crime.crimeVideo.title}</li>
-            <li><strong>Type:</strong> <span class="badge crime-type">${crime.crimeVideo.crimeType}</span></li>
-            <li><strong>Probability:</strong> 
-                <span class="${crime.crimeVideo.crimeProbability > 70 ? 'probability-high' : crime.crimeVideo.crimeProbability > 40 ? 'probability-medium' : 'probability-low'}">
-                ${crime.crimeVideo.crimeProbability.toStringAsFixed(1)}%
-                </span>
-            </li>
-            <li><strong>Weapon:</strong> ${crime.crimeVideo.weaponType}</li>
+            <li><strong>Type:</strong> <span class="badge">${crime.crimeVideo.crimeType}</span></li>
+            <li><strong>Crime Probability:</strong> ${crime.crimeVideo.crimeProbability.toStringAsFixed(0)}%</li>
+            <li><strong>Weapon:</strong> ${crime.crimeVideo.weaponType ?? 'Unknown'}</li>
+            <li><strong>Weapon Probability:</strong> ${(crime.crimeVideo.weaponProbability * 100).toStringAsFixed(0)}%</li>
             <li><strong>Location:</strong> 
                 <a href="https://www.google.com/maps/search/?api=1&query=${crime.crimeVideo.location.latitude},${crime.crimeVideo.location.longitude}" 
                    class="location-link" 
                    target="_blank">
-                   ${crime.crimeVideo.location.latitude.toStringAsFixed(6)}, ${crime.crimeVideo.location.longitude.toStringAsFixed(6)}
+                   ${crime.crimeVideo.location.latitude}, ${crime.crimeVideo.location.longitude}
                 </a>
             </li>
             <li><strong>Date/Time:</strong> ${_formatDateTime(crime.reportedTime)}</li>
-            <li><strong>Status:</strong> <span class="badge status-new">${crime.status}</span></li>
+            <li><strong>Status:</strong> <span class="badge">${crime.status}</span></li>
             ${crime.notes != null ? '<li><strong>Notes:</strong> ${crime.notes}</li>' : ''}
         </ul>
         
         <div class="footer">
             <p>Thank you,</p>
-            <p><strong>ShielDir Team</strong></p>
+            <p><strong>ShieldDir Team</strong></p>
             <p style="font-size: 0.8em; margin-top: 15px;">This is an automated notification. Please do not reply to this message.</p>
         </div>
     </div>
@@ -397,10 +461,21 @@ class _ReportedCrimesScreenState extends State<ReportedCrimesScreen> {
                           ),
                       ],
                     ),
-                    leading: CrimeProbabilityIndicator(
-                      probability: reportedCrime.crimeVideo.crimeProbability / 100,
-                      type: reportedCrime.crimeVideo.crimeType,
-                      weaponType: reportedCrime.crimeVideo.weaponType,
+                    leading: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CrimeProbabilityIndicator(
+                          probability: reportedCrime.crimeVideo.crimeProbability,
+                          type: reportedCrime.crimeVideo.crimeType,
+                          weaponType: reportedCrime.crimeVideo.weaponType,
+                        ),
+                        const SizedBox(width: 8), // Araya boşluk ekledik
+                        CrimeProbabilityIndicator(
+                          probability: reportedCrime.crimeVideo.weaponProbability,
+                          type: 'weapon',
+                          weaponType: reportedCrime.crimeVideo.weaponType,
+                        ),
+                      ],
                     ),
                     trailing: IconButton(
                       icon: const Icon(Icons.edit),

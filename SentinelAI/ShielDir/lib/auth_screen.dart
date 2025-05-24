@@ -30,10 +30,31 @@ class _AuthScreenState extends State<AuthScreen> {
   void _login() async {
     if (!_formKey.currentState!.validate()) return;
 
+    // Email ve şifre kontrolü
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (email != 'admin' || password != 'admin') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Invalid credentials',
+            style: GoogleFonts.rajdhani(),
+          ),
+          backgroundColor: Colors.red[700],
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
 
-    // Simulate authentication
-    await Future.delayed(const Duration(seconds: 2));
+    // Simüle edilmiş giriş işlemi
+    await Future.delayed(const Duration(seconds: 1));
 
     setState(() => _isLoading = false);
 

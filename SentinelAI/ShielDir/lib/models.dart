@@ -78,8 +78,8 @@ class ReportedCrime {
 class ReportedCrimesManager {
   static final List<ReportedCrime> _reportedCrimes = [];
   static final Map<String, String> _officers = {
-    'Officer Marifoğlu': 'officer.smith@police.gov',
-    'Officer Arda': 'officer.smith@police.gov',
+    'Officer Marifoğlu': 'furkanmar@outlook.com',
+    'Officer Arda': 'berkayardaa@outlook.com',
     'Detective Bulut': 'fikribarcabulut@gmail.com',
     'Sergeant Samur': 'ahmetalpsamur@gmail.com',
     'Lieutenant Uzunbayır': 'lieutenant.brown@police.gov',
