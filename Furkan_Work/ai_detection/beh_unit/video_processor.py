@@ -8,7 +8,7 @@ import os
 
 logger = setup_logger("video_processor")
 
-hf_token = "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"
+hf_token = "The Token"
 if hf_token:
     logger.info("🔑 Logging in to HuggingFace Hub with token...")
     login(token=hf_token)
